@@ -1,0 +1,558 @@
+﻿using Microsoft.Win32;
+using Models.Components;
+using Models.Boards;
+using Models.Projects;
+using Models.Mechanical;
+using Models.Wires;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Input;
+
+namespace ComponentsTree
+{
+	/// <summary>
+	/// Логика взаимодействия для MainWindow.xaml
+	/// </summary>
+	public partial class MainWindow : Window
+	{
+		#region данные
+		/// <summary>
+		/// Перечень проектов в дереве
+		/// </summary>
+		private ObservableCollection<Project> Projects { get; set; }
+
+		/// <summary>
+		/// Текущий рабочий проект
+		/// </summary>
+		private Project Project { get; set; }
+
+		/// <summary>
+		/// Текущая выбранная плата в дереве
+		/// </summary>
+		private Board Board { get; set; }
+
+		/// <summary>
+		/// Перечень компонентов
+		/// </summary>
+		private ComponentList ComponentList { get; set; }
+
+		/// <summary>
+		/// Используется для коллекции полей ввода
+		/// </summary>
+		private ObservableCollection<string> ComboBoxCollection;
+		#endregion
+
+		public MainWindow()
+		{
+			InitializeComponent();
+		}
+
+		private void Window_Loaded(object sender, RoutedEventArgs e)
+		{
+			Projects = new ObservableCollection<Project>();
+
+			ComboBoxCollection = new ObservableCollection<string>();
+
+			treeViewProject.ItemsSource = Projects;
+			comboBoxSearch.ItemsSource = ComboBoxCollection;
+		}
+
+		#region Команды
+		
+		#region Меню Файл
+		/// <summary>
+		/// Создать проект
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void CreateProject_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			NameProjectWindow nameProjectWindow = new NameProjectWindow(String.Empty);
+			bool? result = nameProjectWindow.ShowDialog();
+			if (result == true)
+			{
+				Projects.Add(new Project(nameProjectWindow.ProjectName));
+			}
+		}
+
+		/// <summary>
+		/// Открыть проект
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void OpenProject_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			Project project = OpenProject();
+			if (project != null)
+				Projects.Add(project);
+		}
+
+		/// <summary>
+		/// Сохранить проект
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void SaveProject_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (Project == null) return;
+
+			if (Project.ProjectFolder == String.Empty)
+			{
+				SaveFileDialog sfd = new SaveFileDialog
+				{
+					Filter = "Проект печатных плат бинарный (*.prjbrd)|*.prjbrd|Проект печатных плат JSON (*.prjjson)|*.prjjson"
+				};
+				bool? result = sfd.ShowDialog();
+				if (result == true)
+				{
+					Project.ProjectFolder = sfd.FileName;
+				}
+				else return;
+			}
+			if (Project.ProjectFolder.Contains("json"))
+			{
+				ProjectJson projectJson = new ProjectJson(Project);
+				Serilization.JsonSerilizate(Project.ProjectFolder, projectJson);
+				// проверка на правильность сохранения файла
+				object obj = Serilization.JsonDeserilizate(Project.ProjectFolder);
+				if (obj == null)
+					MessageBox.Show("Пересохраните файл, ошибка записи");
+			}
+			else
+				Serilization.BinarySerilizate(Project.ProjectFolder, Project);
+		}
+
+		/// <summary>
+		/// Сохранить проект с новым именем
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void SaveProjectAs_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (Project == null) return;
+
+			SaveFileDialog sfd = new SaveFileDialog
+			{
+				Title = "Сохранить как...",
+				Filter = "Проект печатных плат бинарный (*.prjbrd)|*.prjbrd|Проект печатных плат JSON (*.prjjson)|*.prjjson"
+			};
+			bool? result = sfd.ShowDialog();
+			if (result == true)
+			{
+				Project.ProjectFolder = sfd.FileName;
+			}
+			else return;
+
+			if (Project.ProjectFolder.Contains("json"))
+			{
+				ProjectJson projectJson = new ProjectJson(Project);
+				Serilization.JsonSerilizate(Project.ProjectFolder, projectJson);
+			}
+			else
+				Serilization.BinarySerilizate(Project.ProjectFolder, Project);
+		}
+
+		/// <summary>
+		/// Закрыть проект
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void CloseProject_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (Project == null) return;
+
+			Projects.Remove(Project);
+		}
+
+
+		/// <summary>
+		/// Экспорт полнного перечня компонентов в Excel
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void ExportProjectExcel_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (Project == null)
+			{
+				MessageBox.Show(this.Title, "Выберете проект в дереве");
+				return;
+			}
+			ExportExcel.ExportProject.ExportComponentList(Project);
+
+		}
+
+		#endregion
+		
+		#region Меню Проект
+
+		/// <summary>
+		/// Добавить плату в перечень
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void AddBoard_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (Project == null) return;
+			BoardWindow boardWindow = new BoardWindow(string.Empty, string.Empty, string.Empty, 1);
+			bool? result = boardWindow.ShowDialog();
+			if (result == true)
+			{
+				Models.Boards.Board board = new Models.Boards.Board(boardWindow.BoardName, boardWindow.BoardDescription)
+				{
+					DecimalNumber = boardWindow.BoardDecimalNumber,
+					Count = boardWindow.Count
+				};
+				Project.GetBoardList().Add(board);
+			}
+		}
+
+		/// <summary>
+		/// Добавить плату в перечень
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void RemoveBoard_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (Board == null) return;
+			Projects[0].GetBoardList().Boards.Remove(Board);
+
+		}
+
+
+		/// <summary>
+		/// Импорт платы
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void ImportBoard_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			Models.Projects.Project project = OpenProject();
+			if (project == null) return;
+			ImportBoardWindow ibw = new ImportBoardWindow(project.GetBoardList().Boards, project.Name);
+			bool? result = ibw.ShowDialog();
+			if (result != true) return;
+
+			Projects[0].GetBoardList().Add((Models.Boards.Board)ibw.ImportedBoard.Clone());
+		}
+
+		/// <summary>
+		/// Импорт перечня компонентов
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void ImportComponentAllegro_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (Board == null) return;
+			OpenFileDialog open = new OpenFileDialog
+			{
+				Filter = "HTML файл (*.htm, *.html)|*.htm;*.html"
+			};
+			bool? result = open.ShowDialog();
+			if (result != true) return;
+
+			SeparateAllegroSpb.SeparateHtml separateHtml = new SeparateAllegroSpb.SeparateHtml();
+
+			ObservableCollection<Models.Components.Component> components = separateHtml.ImportHtmlComponents(open.FileName);
+			
+			Board.GetComponentList().Components.Clear();
+
+			foreach(Models.Components.Component component in components)
+				Board.GetComponentList().Add(component);
+		}
+
+		#endregion
+
+		/// <summary>
+		/// Поиск перечня компонентов (электронных компонентов, механических компонентов, проводов)
+		/// по всем параметрам
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void SearchParts_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			string search = e.Parameter.ToString();
+			if (search == null || search == string.Empty) return;
+			if (Projects.Count == 0) return;
+
+			// поиск по платам
+			List<Component> components = FindComponents(search);
+			List<MechanicalComp> mechanicals = FindMechanical(search);
+			List<Wire> wires = FindWires(search);
+
+			ShowModels.WindowFindedElements wfe = new ShowModels.WindowFindedElements();
+			if (components == null || components.Count == 0)
+				wfe.Components = null;
+			else
+				wfe.Components = components;
+
+			if (mechanicals == null || mechanicals.Count == 0)
+				wfe.Mechanicals = null;
+			else
+				wfe.Mechanicals = mechanicals;
+
+			if (wires == null || wires.Count == 0)
+				wfe.Wires = null;
+			else
+				wfe.Wires = wires;
+
+			wfe.ShowDialog();
+		}
+
+		#endregion
+
+		#region Методы
+		/// <summary>
+		/// Отображение перечня компонентов
+		/// </summary>
+		private void ShowComponentList()
+		{
+			ComponentList componentList = null;
+			string nameBoard = string.Empty;
+			if (Board != null)
+			{
+				nameBoard = Board.Name;
+				componentList = Board.GetComponentList();
+			}
+			else if (ComponentList != null)
+				componentList = ComponentList;
+
+			if (componentList != null)
+			{
+				ShowModels.ShowComponentsWindow window = new ShowModels.ShowComponentsWindow(componentList, nameBoard);
+				window.Show();
+			}
+		}
+
+		/// <summary>
+		/// Открытие проекта из бинарного формата и JSON 
+		/// </summary>
+		/// <returns>Проект</returns>
+		private Project OpenProject()
+		{
+			OpenFileDialog open = new OpenFileDialog
+			{
+				Filter = "Проект печатных плат бинарный (*.prjbrd)|*.prjbrd|Проект печатных плат JSON (*.prjjson)|*.prjjson"
+			};
+			bool? result = open.ShowDialog();
+			if (result != true) return null;
+
+			Project project = null;
+			if (open.FilterIndex == 1)
+				project = (Project)Serilization.BinaryDeserilizate(open.FileName);
+			else if (open.FilterIndex == 2)
+			{
+				object projectJson = Serilization.JsonDeserilizate(open.FileName);
+				if (projectJson != null)
+					project = new Project((ProjectJson)projectJson);
+				else return null;
+			}
+			project.ProjectFolder = open.FileName;
+			SortParts(project); // Сортировка частей проекта при открытии
+			return project;
+		}
+
+		/// <summary>
+		/// Сортировка компонентов в проекте
+		/// </summary>
+		/// <param name="project"></param>
+		private void SortParts(Project project)
+		{
+			List<MechanicalComp> listMechanical;
+			List<Component> listComponents;
+			List<Wire> listWires;
+
+			foreach (Board board in project.GetBoardList().Boards)
+			{
+				// 1. Сортировка компонентов в платах
+				listComponents = board.GetComponentList().Components.ToList();
+				listComponents.Sort(new ComponentRefdesCompare());
+				//listComponents.Sort(ComponentRefdesCompare<Component>);
+				board.GetComponentList().Components = new ObservableCollection<Component>(listComponents);
+
+				// 1.1. Сортировка механических компонентов в платах
+				listMechanical = board.GetMechanicalList().MechanicalComps.ToList();
+				listMechanical.Sort();
+				board.GetMechanicalList().MechanicalComps = new ObservableCollection<MechanicalComp>(listMechanical);
+			}
+
+			// 2. Сортировка механических компонентов в проекте
+			listMechanical = project.GetMechanicalList().MechanicalComps.ToList();
+			listMechanical.Sort();
+			project.GetMechanicalList().MechanicalComps = new ObservableCollection<MechanicalComp>(listMechanical);
+
+			// 3. Сoртировка проводов в проекте
+			listWires = project.GetWireList().Wires.ToList();
+			listWires.Sort();
+			project.GetWireList().Wires = new ObservableCollection<Wire>(listWires);
+		}
+
+		/// <summary>
+		/// Поиск списка электронных компонентов
+		/// </summary>
+		/// <param name="search">Строка по которой производится поиск
+		/// '@' - в начале строки означает поиск по полному совпадению
+		/// </param>
+		/// <returns>список найденных компонентов</returns>
+		private List<Component> FindComponents(string search)
+		{
+			List<Component> componentsFinded = new List<Component>(); // перечень электронных компонентов по платам
+			foreach (Board board in Projects[0].GetBoardList().Boards)
+			{
+				List<Component> components = board.GetComponentList().Components.ToList();
+				List<Component> comps = components.FindAll(i => i.FindElement(search));
+				componentsFinded.AddRange(comps);
+			}
+			if (componentsFinded.Count == 0) return null;
+			return componentsFinded;
+		}
+
+		/// <summary>
+		/// Поиск списка механических компонентов
+		/// </summary>
+		/// <param name="search">Строка по которой производится поиск
+		/// '@' - в начале строки означает поиск по полному совпадению
+		/// </param>
+		/// <returns>список найденных механических компонентов</returns>
+		private List<MechanicalComp> FindMechanical(string search)
+		{
+			List<MechanicalComp> mechanicalFinded = new List<MechanicalComp>(); // перечень электронных компонентов по платам
+
+			if (mechanicalFinded.Count == 0) return null;
+			return mechanicalFinded;
+		}
+
+		/// <summary>
+		/// Поиск списка проводов
+		/// </summary>
+		/// <param name="search">Строка по которой производится поиск
+		/// '@' - в начале строки означает поиск по полному совпадению
+		/// </param>
+		/// <returns>список найденных проводов</returns>
+		private List<Wire> FindWires(string search)
+		{
+			List<Wire> wireFinded = new List<Wire>(); // перечень электронных компонентов по платам
+
+			if (wireFinded.Count == 0) return null;
+			return wireFinded;
+		}
+		#endregion
+
+		private void TreeViewProject_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+		{
+			Project = null;
+			Board = null;
+			ComponentList = null;
+			if (e.NewValue as Models.Projects.Project != null)
+			{
+				Project = e.NewValue as Models.Projects.Project;
+			}
+			else if (e.NewValue as Models.Boards.BoardList != null)
+			{
+
+			}
+			else if (e.NewValue as Models.Boards.Board != null)
+			{
+				Board = e.NewValue as Models.Boards.Board;
+			}
+			else if (e.NewValue as Models.Components.ComponentList != null)
+			{
+				ComponentList = e.NewValue as Models.Components.ComponentList;
+			}
+			else if (e.NewValue as Models.Components.Component != null)
+			{
+
+			}
+			else if (e.NewValue as Models.Mechanical.MechanicalList != null)
+			{
+
+			}
+			else if (e.NewValue as Models.Mechanical.MechanicalComp != null)
+			{
+
+			}
+			else if (e.NewValue as Models.Wires.WireList != null)
+			{
+
+			}
+			else if (e.NewValue as Models.Wires.Wire != null)
+			{
+
+			}
+		}
+
+		private void TreeViewProject_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+		{
+			if (Project != null)
+			{
+				// изменение название проекта
+				NameProjectWindow npm = new NameProjectWindow(Project.Name);
+				bool? result = npm.ShowDialog();
+				if (result != true) return;
+
+				Project.Name = npm.ProjectName;
+			}
+			else if (Board != null)
+			{
+				ShowComponentList();
+			}
+			else if (ComponentList != null)
+			{
+				ShowComponentList();
+			}
+		}
+
+		private void ButtonSearch_Click(object sender, RoutedEventArgs e)
+		{
+			string search = comboBoxSearch.Text;
+			if (!ComboBoxCollection.Contains(search))
+				ComboBoxCollection.Add(search);
+			comboBoxSearch.Text = string.Empty;
+			commandSearchParts.Command.Execute(search);
+			
+		}
+
+		private void ComboBoxSearch_TextChanged(object sender, TextChangedEventArgs e)
+		{
+			//https://ru.stackoverflow.com/questions/549935/%D0%96%D0%B8%D0%B2%D0%BE%D0%B9-%D0%BF%D0%BE%D0%B8%D1%81%D0%BA-system-windows-controls-combobox-c-wpf
+			/*
+			 CB.IsDropDownOpen = true;
+			// убрать selection, если dropdown только открылся
+			var tb = (TextBox)e.OriginalSource;
+			tb.Select(tb.SelectionStart + tb.SelectionLength, 0);
+			CollectionView cv = (CollectionView)CollectionViewSource.GetDefaultView(CB.ItemsSource);
+			cv.Filter = s => ((string)s).IndexOf(CB.Text, StringComparison.CurrentCultureIgnoreCase) >= 0;*/
+
+			// убрать selection, если dropdown только открылся
+			var tb = (TextBox)e.OriginalSource;
+
+			if (tb.SelectionStart != 0)
+				comboBoxSearch.SelectedItem = null; // Если набирается текст сбросить выбранный элемент
+
+			if (tb.SelectionStart == 0 && comboBoxSearch.SelectedItem == null)
+				comboBoxSearch.IsDropDownOpen = false;
+			else
+				comboBoxSearch.IsDropDownOpen = true;
+
+			tb.Select(tb.SelectionStart + tb.SelectionLength, 0);
+			CollectionView cv = (CollectionView)CollectionViewSource.GetDefaultView(comboBoxSearch.ItemsSource);
+			cv.Filter = s => ((string)s).IndexOf(comboBoxSearch.Text, StringComparison.CurrentCultureIgnoreCase) >= 0;
+		}
+
+		private void ComboBoxSearch_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.Key == Key.Return)
+			{
+				string search = comboBoxSearch.Text;
+				if (!ComboBoxCollection.Contains(search))
+					ComboBoxCollection.Add(search);
+				comboBoxSearch.Text = string.Empty;
+				commandSearchParts.Command.Execute(search);
+			}
+		}
+	}
+}

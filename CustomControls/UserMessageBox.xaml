@@ -1,0 +1,23 @@
+﻿<Window x:Class="CustomControls.UserMessageBox"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CustomControls"
+        mc:Ignorable="d"
+        Title="UserMessageBox" Height="Auto" Width="Auto" Loaded="Window_Loaded" ResizeMode="NoResize" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterOwner">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="1*"/>
+			<RowDefinition Height="75"/>
+		</Grid.RowDefinitions>
+		<TextBlock x:Name="textBlockContent" Grid.Row="0" TextWrapping="Wrap" Margin="20"/>
+		<Grid Grid.Row="1" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+			<StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="20">
+				<Button x:Name="buttonOkYesApply1" Content="OK" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Width="75" Click="ButtonOkYesApply1_Click"/>
+				<Button x:Name="buttonNoApply2" Content="Нет" HorizontalAlignment="Left" Margin="5,0,0,0" VerticalAlignment="Top" Width="75" Click="ButtonNoApply2_Click"/>
+				<Button x:Name="buttonCancel" Content="Отмена" HorizontalAlignment="Left" Margin="5,0,0,0" VerticalAlignment="Top" Width="75" Click="ButtonCancel_Click"/>
+			</StackPanel>
+		</Grid>
+	</Grid>
+</Window>

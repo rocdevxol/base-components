@@ -1,0 +1,265 @@
+﻿<Window x:Class="ComponentsTree.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ComponentsTree"
+		xmlns:selfB="clr-namespace:Models.Boards;assembly=Models"
+		xmlns:selfC="clr-namespace:Models.Components;assembly=Models"
+		xmlns:selfM="clr-namespace:Models.Mechanical;assembly=Models"
+		xmlns:selfW="clr-namespace:Models.Wires;assembly=Models"
+		xmlns:selfP="clr-namespace:Models.Projects;assembly=Models"
+        mc:Ignorable="d"
+        Title="Каталог компонентов" Height="500" Width="320" Loaded="Window_Loaded" Icon="catalog_icon.ico">
+    <Window.CommandBindings>
+        <CommandBinding Command="local:CustomCommands.CreateProject" Executed="CreateProject_Executed"/>
+        <CommandBinding Command="local:CustomCommands.OpenProject" Executed="OpenProject_Executed"/>
+        <CommandBinding Command="local:CustomCommands.SaveProject" Executed="SaveProject_Executed"/>
+        <CommandBinding Command="local:CustomCommands.SaveProjectAs" Executed="SaveProjectAs_Executed"/>
+        <CommandBinding Command="local:CustomCommands.CloseProject" Executed="CloseProject_Executed"/>
+        <CommandBinding Command="local:CustomCommands.ExportProjectExcel" Executed="ExportProjectExcel_Executed"/>
+
+        <CommandBinding Command="local:CustomCommands.AddBoard" Executed="AddBoard_Executed"/>
+        <CommandBinding Command="local:CustomCommands.RemoveBoard" Executed="RemoveBoard_Executed"/>
+        <CommandBinding Command="local:CustomCommands.ImportBoard" Executed="ImportBoard_Executed"/>
+        <CommandBinding Command="local:CustomCommands.ImportComponentAllegro" Executed="ImportComponentAllegro_Executed"/>
+
+        <CommandBinding x:Name="commandSearchParts" Command="local:CustomCommands.SearchParts" Executed="SearchParts_Executed"/>
+    </Window.CommandBindings>
+
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_Файл">
+                <MenuItem Header="_Новый проект" Command="local:CustomCommands.CreateProject">
+                    <MenuItem.Icon>
+                        <Image Source="{StaticResource NewFile}"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="_Открыть проект" Command="local:CustomCommands.OpenProject">
+                    <MenuItem.Icon>
+                        <Image Source="{StaticResource OpenFile}"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <Separator/>
+                <MenuItem Header="Сохранить проект" Command="local:CustomCommands.SaveProject">
+                    <MenuItem.Icon>
+                        <Image Source="{StaticResource SaveFile}"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Сохранить как..." Command="local:CustomCommands.SaveProjectAs">
+                    <MenuItem.Icon>
+                        <Image Source="{StaticResource SaveFile}"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <Separator/>
+                <MenuItem Header="Экспорт">
+                    <MenuItem Header="Excel" Command="local:CustomCommands.ExportProjectExcel" ToolTip="Экспорт полного перечня компонентов по всем платам">
+                        <MenuItem.Icon>
+                            <Image Source="{StaticResource ExcelVector}"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
+                <Separator/>
+                <MenuItem Header="Закрыть проект" Command="local:CustomCommands.CloseProject">
+                    <MenuItem.Icon>
+                        <Image Source="{StaticResource Close}"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+            <MenuItem Header="Проект">
+                <MenuItem Header="Добавить плату" Command="local:CustomCommands.AddBoard"/>
+                <MenuItem Header="Удалить плату" Command="local:CustomCommands.RemoveBoard"/>
+                <Separator/>
+                <MenuItem Header="Добавить компонент">
+                    <MenuItem.Icon>
+                        <Image Source="{StaticResource ComponentAddVector}"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Удалить компонент">
+                    <MenuItem.Icon>
+                        <Image Source="{StaticResource ComponentRemoveVector}"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <Separator/>
+                <MenuItem Header="Добавить механическую деталь"/>
+                <MenuItem Header="Удалить механическую деталь"/>
+                <Separator/>
+                <MenuItem Header="Добавить провод"/>
+                <MenuItem Header="Удалить провод"/>
+                <Separator/>
+                <MenuItem Header="Импорт">
+                    <MenuItem Header="Импорт платы" Command="local:CustomCommands.ImportBoard"/>
+                    <MenuItem Header="Импорт перечня компонентов Allegro" Command="local:CustomCommands.ImportComponentAllegro"/>
+                </MenuItem>
+
+            </MenuItem>
+        </Menu>
+        <ToolBar DockPanel.Dock="Top">
+            <Button ToolTip="Новый проект" Command="local:CustomCommands.CreateProject">
+                <Image Width="16" Height="16" Source="{StaticResource NewFile}"/>
+            </Button>
+            <Button ToolTip="Открыть проект" Command="local:CustomCommands.OpenProject">
+                <Image Width="16" Height="16" Source="{StaticResource OpenFile}"/>
+            </Button>
+            <Separator/>
+            <Button ToolTip="Сохранить проект" Command="local:CustomCommands.SaveProject">
+                <Image Width="16" Height="16" Source="{StaticResource SaveFile}"/>
+            </Button>
+
+        </ToolBar>
+        <StatusBar DockPanel.Dock="Bottom">
+
+        </StatusBar>
+        <Grid x:Name="LayoutRoot">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <ComboBox x:Name="comboBoxSearch" Margin="0,2,29,0" VerticalAlignment="Top" HorizontalAlignment="Stretch" IsEditable="True" IsTextSearchEnabled="False" TextBoxBase.TextChanged="ComboBoxSearch_TextChanged" KeyDown="ComboBoxSearch_KeyDown"/>
+            <Button x:Name="buttonSearch" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,0,1" Click="ButtonSearch_Click">
+                <Image Width="20" Height="20" Source="{StaticResource Find}"/>
+            </Button>
+
+
+
+
+            <TreeView x:Name="treeViewProject" Grid.Row="1" Margin="0,5,0,0" SelectedItemChanged="TreeViewProject_SelectedItemChanged" MouseDoubleClick="TreeViewProject_MouseDoubleClick">
+                <TreeView.Resources>
+                    <ContextMenu x:Key="contextProject">
+                        <MenuItem Header="Переименовать"/>
+                        <Separator/>
+                        <MenuItem Header="Просмотр перечня механических компонентов"/>
+                        <MenuItem Header="Просмотр перечня проводов"/>
+                        <Separator/>
+                        <MenuItem Header="Показать общий список компонентов проекта"/>
+                        <Separator/>
+                        <MenuItem Header="Экспорт проекта"/>
+                    </ContextMenu>
+                    <ContextMenu x:Key="contextBoard">
+                        <MenuItem Header="Параметры платы"/>
+                        <Separator/>
+                        <MenuItem Header="Просмотр перечня компонентов"/>
+                        <MenuItem Header="Просмотр перечня механических компонентов"/>
+                        <Separator/>
+                        <MenuItem Header="Экспорт платы"/>
+                    </ContextMenu>
+                    <ContextMenu x:Key="contextComponent">
+                        <MenuItem Header="Свойства"/>
+                    </ContextMenu>
+                    <ContextMenu x:Key="contextMechanical">
+                        <MenuItem Header="Свойства"/>
+                    </ContextMenu>
+                    <ContextMenu x:Key="contextWire">
+                        <MenuItem Header="Свойства"/>
+                    </ContextMenu>
+
+                    <!--Проект, с перечнем составляющих-->
+                    <HierarchicalDataTemplate DataType="{x:Type selfP:Project}" ItemsSource="{Binding Parts, UpdateSourceTrigger=PropertyChanged}">
+                        <StackPanel Orientation="Horizontal">
+                            <Viewbox Width="24" Height="24" Margin="0,0,5,0">
+                                <Image Source="{StaticResource Project}" />
+                            </Viewbox>
+                            <TextBlock Text="{Binding Name}"/>
+                        </StackPanel>
+                    </HierarchicalDataTemplate>
+
+                    <!--Перечень печатных плат-->
+                    <HierarchicalDataTemplate DataType="{x:Type selfB:BoardList}" ItemsSource="{Binding Boards, UpdateSourceTrigger=PropertyChanged}">
+                        <StackPanel Orientation="Horizontal">
+                            <Viewbox Width="24" Height="24" Margin="0,0,5,0">
+                                <Image Source="{StaticResource FolderBoards}" />
+                            </Viewbox>
+                            <TextBlock Text="{Binding}" Margin="0,0,5,0"/>
+                        </StackPanel>
+                    </HierarchicalDataTemplate>
+
+                    <!--Перечень составляющих в печатной плате-->
+                    <HierarchicalDataTemplate DataType="{x:Type selfB:Board}" ItemsSource="{Binding Parts, UpdateSourceTrigger=PropertyChanged}">
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox IsChecked="{Binding EnableToCalc}" VerticalAlignment="Center" Margin="2" ToolTip="Включить/исключить в проекте"/>
+                            <Viewbox Width="24" Height="24" Margin="0,0,5,0">
+                                <Image Source="{StaticResource AnswerRemove}" />
+                            </Viewbox>
+                            <TextBlock Text="{Binding}" Margin="0,0,5,0" ToolTip="{Binding Description}"/>
+                        </StackPanel>
+                    </HierarchicalDataTemplate>
+
+                    <!--Перечень механических компонентов-->
+                    <HierarchicalDataTemplate DataType="{x:Type selfM:MechanicalList}" ItemsSource="{Binding MechanicalComps, UpdateSourceTrigger=PropertyChanged}">
+                        <StackPanel Orientation="Horizontal">
+                            <Viewbox Width="24" Height="24" Margin="0,0,5,0">
+                                <Image Source="{StaticResource FolderMechanicalComponents}" />
+                            </Viewbox>
+                            <TextBlock Text="{Binding}" Margin="0,0,5,0"/>
+                        </StackPanel>
+                    </HierarchicalDataTemplate>
+
+                    <!--Перечень проводов-->
+                    <HierarchicalDataTemplate DataType="{x:Type selfW:WireList}" ItemsSource="{Binding Wires, UpdateSourceTrigger=PropertyChanged}">
+                        <StackPanel Orientation="Horizontal">
+                            <Viewbox Width="24" Height="24" Margin="0,0,5,0">
+                                <Image Source="{StaticResource FolderWires}" />
+                            </Viewbox>
+                            <TextBlock Text="{Binding}" Margin="0,0,5,0"/>
+                        </StackPanel>
+                    </HierarchicalDataTemplate>
+
+                    <!--Перечень компонентов-->
+                    <HierarchicalDataTemplate DataType="{x:Type selfC:ComponentList}" ItemsSource="{Binding Components, UpdateSourceTrigger=PropertyChanged}">
+                        <StackPanel Orientation="Horizontal">
+                            <Viewbox Width="24" Height="24" Margin="0,0,5,0">
+                                <Image Source="{StaticResource AnswerAdd}" />
+                            </Viewbox>
+                            <TextBlock Text="{Binding}" Margin="0,0,5,0"/>
+                        </StackPanel>
+                    </HierarchicalDataTemplate>
+
+                    <!--Описание компонента-->
+                    <HierarchicalDataTemplate DataType="{x:Type selfC:Component}">
+                        <StackPanel Orientation="Horizontal">
+                            <Viewbox Width="24" Height="24" Margin="0,0,5,0">
+                                <Image Source="{StaticResource ComponentVector}" />
+                            </Viewbox>
+                            <TextBlock Text="{Binding RefDes}" Margin="0,0,5,0"/>
+                            <TextBlock Text="[" Foreground="Blue"/>
+                            <TextBlock Text="{Binding Description}" Foreground="Blue"/>
+                            <TextBlock Text="]" Foreground="Blue" Margin="0,0,5,0"/>
+                        </StackPanel>
+                    </HierarchicalDataTemplate>
+
+                    <!--Описание компонента-->
+                    <HierarchicalDataTemplate DataType="{x:Type selfM:MechanicalComp}">
+                        <StackPanel Orientation="Horizontal">
+                            <Viewbox Width="24" Height="24" Margin="0,0,5,0">
+                                <Image Source="{StaticResource AutoCooling}" />
+                            </Viewbox>
+                            <TextBlock Text="{Binding Description}" Margin="0,0,5,0"/>
+                            <TextBlock Text="[" Foreground="Blue"/>
+                            <TextBlock Text="{Binding Count}" Foreground="Blue"/>
+                            <TextBlock Text="]" Foreground="Blue" Margin="0,0,5,0"/>
+                        </StackPanel>
+                    </HierarchicalDataTemplate>
+
+                    <!--Описание провода-->
+                    <HierarchicalDataTemplate DataType="{x:Type selfW:Wire}">
+                        <StackPanel Orientation="Horizontal">
+                            <Viewbox Width="24" Height="24" Margin="0,0,5,0">
+                                <Image Source="{StaticResource AirExchanger}" />
+                            </Viewbox>
+                            <TextBlock Text="{Binding Description}" Margin="0,0,5,0"/>
+                            <TextBlock Text=", "/>
+                            <TextBlock Text="{Binding CrossSection}"/>
+                            <TextBlock Text=" [" Foreground="Blue"/>
+                            <TextBlock Text="{Binding Length}" Foreground="Blue"/>
+                            <TextBlock Text=" : " Foreground="Blue"/>
+                            <TextBlock Text="{Binding Count}" Foreground="Blue"/>
+                            <TextBlock Text="]" Foreground="Blue"/>
+                        </StackPanel>
+                    </HierarchicalDataTemplate>
+
+                </TreeView.Resources>
+            </TreeView>
+        </Grid>
+    </DockPanel>
+</Window>

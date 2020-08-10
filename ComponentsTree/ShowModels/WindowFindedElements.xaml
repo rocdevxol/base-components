@@ -1,0 +1,45 @@
+﻿<Window x:Class="ComponentsTree.ShowModels.WindowFindedElements"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ComponentsTree.ShowModels"
+        mc:Ignorable="d"
+        Title="Найденные элементы в перечне" Height="450" Width="800" Loaded="Window_Loaded">
+    <Grid>
+        <TabControl>
+            <TabItem x:Name="tabItemComponents" Header="Электронные компоненты">
+                <Grid Background="#FFE5E5E5">
+                    <DataGrid x:Name="dataGridComponents" Margin="5" AutoGenerateColumns="False" HorizontalGridLinesBrush="Gray" VerticalGridLinesBrush="Gray"
+				  CanUserResizeRows="False" SelectionMode="Single" ColumnHeaderHeight="30" RowHeight="24"
+				  CanUserReorderColumns="False" CanUserResizeColumns="True" CanUserSortColumns="False"
+				  AlternatingRowBackground="LightGray" IsReadOnly="False"
+				  SelectionChanged="DataGridComponents_SelectionChanged" LoadingRow="DataGridComponents_LoadingRow" BeginningEdit="DataGridComponents_BeginningEdit" CellEditEnding="DataGridComponents_CellEditEnding">
+                        <DataGrid.RowHeaderStyle>
+                            <Style TargetType="{x:Type DataGridRowHeader}">
+                                <Setter Property="Width" Value="30" />
+                            </Style>
+                        </DataGrid.RowHeaderStyle>
+                        <DataGrid.Columns>
+                            <DataGridCheckBoxColumn Header="П" Binding="{Binding Soldering}"/>
+                            <DataGridTextColumn Header="Поз. об." Binding="{Binding RefDes}"/>
+                            <DataGridTextColumn Header="Тип компонента" Binding="{Binding TypeComponent}"/>
+                            <DataGridTextColumn Header="Описание" Binding="{Binding Description}"/>
+                            <DataGridTextColumn Header="Количество" Binding="{Binding Count}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="tabItemMechanical" Header="Механические компоненты">
+                <Grid Background="#FFE5E5E5">
+                    <DataGrid x:Name="dataGridMechanical" Margin="5"/>
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="tabItemWires" Header="Провода">
+                <Grid Background="#FFE5E5E5">
+                    <DataGrid x:Name="dataGridWires" Margin="5"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
