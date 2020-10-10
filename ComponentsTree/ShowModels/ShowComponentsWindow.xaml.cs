@@ -294,22 +294,25 @@ namespace ComponentsTree.ShowModels
 		/// <param name="count">Максимальное количество субэлементов</param>
 		private void GenerateDataGridColumns(object sender, int count)
 		{
+			const int addColumns = 3;//2
 			int nowColumns = (sender as DataGrid).Columns.Count;
 			if ((sender as DataGrid).Name == dataGridRefDes.Name)
 			{
-				nowColumns = (nowColumns - 5) / 2;
+				nowColumns = (nowColumns - 5) / addColumns;
 				for (; nowColumns < count; nowColumns++)
 				{
 					AddTextColumn(sender, string.Format("Корпус {0}", nowColumns + 1), string.Format("Names[{0}].Package.Name", nowColumns));
+					AddTextColumn(sender, string.Format("Цена {0}", nowColumns + 1), string.Format("Names[{0}].Price", nowColumns), "F4");
 					AddTextColumn(sender, string.Format("Значение {0}", nowColumns + 1), string.Format("Names[{0}].Name", nowColumns));
 				}
 			}
 			else if ((sender as DataGrid).Name == dataGridTotal.Name)
 			{
-				nowColumns = (nowColumns - 3) / 2;
+				nowColumns = (nowColumns - 3) / addColumns;
 				for (; nowColumns < count; nowColumns++)
 				{
 					AddTextColumn(sender, string.Format("Корпус {0}", nowColumns + 1), string.Format("Names[{0}].Package.Name", nowColumns));
+					AddTextColumn(sender, string.Format("Цена {0}", nowColumns + 1), string.Format("Names[{0}].Price", nowColumns), "F4");
 					AddTextColumn(sender, string.Format("Значение {0}", nowColumns + 1), string.Format("Names[{0}].Name", nowColumns));
 				}
 			}
@@ -328,6 +331,24 @@ namespace ComponentsTree.ShowModels
 				Header = header,
 				Binding = new Binding(binding)
 			};
+			(sender as DataGrid).Columns.Add(column);
+		}
+
+		/// <summary>
+		/// Добавление столбцов в DataGrid
+		/// </summary>
+		/// <param name="sender">Наименование DataGrid</param>
+		/// <param name="header">Отформатированный заголовок</param>
+		/// <param name="binding">Название параметра на который делается ссылка</param>
+		/// /// <param name="stringFormat">Форматирование выходного значениея</param>
+		private void AddTextColumn(object sender, string header, string binding, string stringFormat)
+		{
+			DataGridTextColumn column = new DataGridTextColumn
+			{
+				Header = header,
+				Binding = new Binding(binding)
+			};
+			column.Binding.StringFormat = stringFormat;
 			(sender as DataGrid).Columns.Add(column);
 		}
 

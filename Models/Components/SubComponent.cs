@@ -14,6 +14,7 @@ namespace Models.Components
 		private Package package;
 		private Developer developer;
 		private Distributor distributor;
+		private double price;
 
 		/// <summary>
 		/// Покупное наименование компонента
@@ -79,12 +80,29 @@ namespace Models.Components
 			}
 		}
 
+		/// <summary>
+		/// Стоимость компонентов
+		/// </summary>
+		public double Price
+		{
+			get => price;
+			set
+			{
+				if (price != value)
+				{
+					price = value;
+					NotifyPropertyChanged();
+				}
+			}
+		}
+
 		public SubComponent(string name)
 		{
 			Name = name;
 			Developer = new Developer(string.Empty);
 			Distributor = new Distributor(string.Empty);
 			Package = new Package(string.Empty);
+			Price = 0;
 		}
 
 		public SubComponent() : this(string.Empty)
@@ -111,6 +129,7 @@ namespace Models.Components
 		{
 			int result = Name.CompareTo(obj.Name);
 			result += Package.CompareTo(obj.Package);
+			result += Price.CompareTo(obj.Price);
 			return result;
 		}
 
