@@ -46,6 +46,7 @@ namespace ExportExcel
 
 				foreach (Models.Boards.Board board in Project.GetBoardList().Boards)
 				{
+					if (!board.EnableToCalc) continue;
 					if (!string.IsNullOrEmpty(board.DecimalNumber))
 						excel.AddSheet(string.Format("{0} - Компоненты", board.Name));
 					else
