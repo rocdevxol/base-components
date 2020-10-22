@@ -1,8 +1,8 @@
 ﻿using Microsoft.Win32;
-using Models.Components;
 using Models.Boards;
-using Models.Projects;
+using Models.Components;
 using Models.Mechanical;
+using Models.Projects;
 using Models.Wires;
 using System;
 using System.Collections.Generic;
@@ -63,7 +63,7 @@ namespace ComponentsTree
 		}
 
 		#region Команды
-		
+
 		#region Меню Файл
 		/// <summary>
 		/// Создать проект
@@ -72,7 +72,7 @@ namespace ComponentsTree
 		/// <param name="e"></param>
 		private void CreateProject_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			NameProjectWindow nameProjectWindow = new NameProjectWindow(String.Empty);
+			NameProjectWindow nameProjectWindow = new NameProjectWindow(string.Empty);
 			bool? result = nameProjectWindow.ShowDialog();
 			if (result == true)
 			{
@@ -89,7 +89,9 @@ namespace ComponentsTree
 		{
 			Project project = OpenProject();
 			if (project != null)
+			{
 				Projects.Add(project);
+			}
 		}
 
 		/// <summary>
@@ -99,9 +101,12 @@ namespace ComponentsTree
 		/// <param name="e"></param>
 		private void SaveProject_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (Project == null) return;
+			if (Project == null)
+			{
+				return;
+			}
 
-			if (Project.ProjectFolder == String.Empty)
+			if (Project.ProjectFolder == string.Empty)
 			{
 				SaveFileDialog sfd = new SaveFileDialog
 				{
@@ -112,7 +117,10 @@ namespace ComponentsTree
 				{
 					Project.ProjectFolder = sfd.FileName;
 				}
-				else return;
+				else
+				{
+					return;
+				}
 			}
 			if (Project.ProjectFolder.Contains("json"))
 			{
@@ -121,10 +129,14 @@ namespace ComponentsTree
 				// проверка на правильность сохранения файла
 				object obj = Serilization.JsonDeserilizate(Project.ProjectFolder);
 				if (obj == null)
+				{
 					MessageBox.Show("Пересохраните файл, ошибка записи");
+				}
 			}
 			else
+			{
 				Serilization.BinarySerilizate(Project.ProjectFolder, Project);
+			}
 		}
 
 		/// <summary>
@@ -134,7 +146,10 @@ namespace ComponentsTree
 		/// <param name="e"></param>
 		private void SaveProjectAs_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (Project == null) return;
+			if (Project == null)
+			{
+				return;
+			}
 
 			SaveFileDialog sfd = new SaveFileDialog
 			{
@@ -146,7 +161,10 @@ namespace ComponentsTree
 			{
 				Project.ProjectFolder = sfd.FileName;
 			}
-			else return;
+			else
+			{
+				return;
+			}
 
 			if (Project.ProjectFolder.Contains("json"))
 			{
@@ -154,7 +172,9 @@ namespace ComponentsTree
 				Serilization.JsonSerilizate(Project.ProjectFolder, projectJson);
 			}
 			else
+			{
 				Serilization.BinarySerilizate(Project.ProjectFolder, Project);
+			}
 		}
 
 		/// <summary>
@@ -164,7 +184,10 @@ namespace ComponentsTree
 		/// <param name="e"></param>
 		private void CloseProject_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (Project == null) return;
+			if (Project == null)
+			{
+				return;
+			}
 
 			Projects.Remove(Project);
 		}
@@ -179,7 +202,7 @@ namespace ComponentsTree
 		{
 			if (Project == null)
 			{
-				MessageBox.Show(this.Title, "Выберете проект в дереве");
+				MessageBox.Show(Title, "Выберете проект в дереве");
 				return;
 			}
 			ExportExcel.ExportProject.ExportComponentList(Project);
@@ -187,7 +210,7 @@ namespace ComponentsTree
 		}
 
 		#endregion
-		
+
 		#region Меню Проект
 
 		/// <summary>
@@ -197,12 +220,16 @@ namespace ComponentsTree
 		/// <param name="e"></param>
 		private void AddBoard_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (Project == null) return;
+			if (Project == null)
+			{
+				return;
+			}
+
 			BoardWindow boardWindow = new BoardWindow(string.Empty, string.Empty, string.Empty, 1);
 			bool? result = boardWindow.ShowDialog();
 			if (result == true)
 			{
-				Models.Boards.Board board = new Models.Boards.Board(boardWindow.BoardName, boardWindow.BoardDescription)
+				Board board = new Board(boardWindow.BoardName, boardWindow.BoardDescription)
 				{
 					DecimalNumber = boardWindow.BoardDecimalNumber,
 					Count = boardWindow.Count
@@ -218,7 +245,11 @@ namespace ComponentsTree
 		/// <param name="e"></param>
 		private void RemoveBoard_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (Board == null) return;
+			if (Board == null)
+			{
+				return;
+			}
+
 			Projects[0].GetBoardList().Boards.Remove(Board);
 
 		}
@@ -231,13 +262,20 @@ namespace ComponentsTree
 		/// <param name="e"></param>
 		private void ImportBoard_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			Models.Projects.Project project = OpenProject();
-			if (project == null) return;
+			Project project = OpenProject();
+			if (project == null)
+			{
+				return;
+			}
+
 			ImportBoardWindow ibw = new ImportBoardWindow(project.GetBoardList().Boards, project.Name);
 			bool? result = ibw.ShowDialog();
-			if (result != true) return;
+			if (result != true)
+			{
+				return;
+			}
 
-			Projects[0].GetBoardList().Add((Models.Boards.Board)ibw.ImportedBoard.Clone());
+			Projects[0].GetBoardList().Add((Board)ibw.ImportedBoard.Clone());
 		}
 
 		/// <summary>
@@ -247,22 +285,31 @@ namespace ComponentsTree
 		/// <param name="e"></param>
 		private void ImportComponentAllegro_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (Board == null) return;
+			if (Board == null)
+			{
+				return;
+			}
+
 			OpenFileDialog open = new OpenFileDialog
 			{
 				Filter = "HTML файл (*.htm, *.html)|*.htm;*.html"
 			};
 			bool? result = open.ShowDialog();
-			if (result != true) return;
+			if (result != true)
+			{
+				return;
+			}
 
 			SeparateAllegroSpb.SeparateHtml separateHtml = new SeparateAllegroSpb.SeparateHtml();
 
-			ObservableCollection<Models.Components.Component> components = separateHtml.ImportHtmlComponents(open.FileName);
-			
+			ObservableCollection<Component> components = separateHtml.ImportHtmlComponents(open.FileName);
+
 			Board.GetComponentList().Components.Clear();
 
-			foreach(Models.Components.Component component in components)
+			foreach (Component component in components)
+			{
 				Board.GetComponentList().Add(component);
+			}
 		}
 
 		#endregion
@@ -276,8 +323,15 @@ namespace ComponentsTree
 		private void SearchParts_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
 			string search = e.Parameter.ToString();
-			if (search == null || search == string.Empty) return;
-			if (Projects.Count == 0) return;
+			if (search == null || search == string.Empty)
+			{
+				return;
+			}
+
+			if (Projects.Count == 0)
+			{
+				return;
+			}
 
 			// поиск по платам
 			List<Component> components = FindComponents(search);
@@ -286,19 +340,31 @@ namespace ComponentsTree
 
 			ShowModels.WindowFindedElements wfe = new ShowModels.WindowFindedElements();
 			if (components == null || components.Count == 0)
+			{
 				wfe.Components = null;
+			}
 			else
+			{
 				wfe.Components = components;
+			}
 
 			if (mechanicals == null || mechanicals.Count == 0)
+			{
 				wfe.Mechanicals = null;
+			}
 			else
+			{
 				wfe.Mechanicals = mechanicals;
+			}
 
 			if (wires == null || wires.Count == 0)
+			{
 				wfe.Wires = null;
+			}
 			else
+			{
 				wfe.Wires = wires;
+			}
 
 			wfe.ShowDialog();
 		}
@@ -319,7 +385,9 @@ namespace ComponentsTree
 				componentList = Board.GetComponentList();
 			}
 			else if (ComponentList != null)
+			{
 				componentList = ComponentList;
+			}
 
 			if (componentList != null)
 			{
@@ -339,17 +407,27 @@ namespace ComponentsTree
 				Filter = "Проект печатных плат бинарный (*.prjbrd)|*.prjbrd|Проект печатных плат JSON (*.prjjson)|*.prjjson"
 			};
 			bool? result = open.ShowDialog();
-			if (result != true) return null;
+			if (result != true)
+			{
+				return null;
+			}
 
 			Project project = null;
 			if (open.FilterIndex == 1)
+			{
 				project = (Project)Serilization.BinaryDeserilizate(open.FileName);
+			}
 			else if (open.FilterIndex == 2)
 			{
 				object projectJson = Serilization.JsonDeserilizate(open.FileName);
 				if (projectJson != null)
+				{
 					project = new Project((ProjectJson)projectJson);
-				else return null;
+				}
+				else
+				{
+					return null;
+				}
 			}
 			project.ProjectFolder = open.FileName;
 			SortParts(project); // Сортировка частей проекта при открытии
@@ -407,7 +485,11 @@ namespace ComponentsTree
 				List<Component> comps = components.FindAll(i => i.FindElement(search));
 				componentsFinded.AddRange(comps);
 			}
-			if (componentsFinded.Count == 0) return null;
+			if (componentsFinded.Count == 0)
+			{
+				return null;
+			}
+
 			return componentsFinded;
 		}
 
@@ -422,7 +504,11 @@ namespace ComponentsTree
 		{
 			List<MechanicalComp> mechanicalFinded = new List<MechanicalComp>(); // перечень электронных компонентов по платам
 
-			if (mechanicalFinded.Count == 0) return null;
+			if (mechanicalFinded.Count == 0)
+			{
+				return null;
+			}
+
 			return mechanicalFinded;
 		}
 
@@ -437,7 +523,11 @@ namespace ComponentsTree
 		{
 			List<Wire> wireFinded = new List<Wire>(); // перечень электронных компонентов по платам
 
-			if (wireFinded.Count == 0) return null;
+			if (wireFinded.Count == 0)
+			{
+				return null;
+			}
+
 			return wireFinded;
 		}
 		#endregion
@@ -447,39 +537,39 @@ namespace ComponentsTree
 			Project = null;
 			Board = null;
 			ComponentList = null;
-			if (e.NewValue as Models.Projects.Project != null)
+			if (e.NewValue as Project != null)
 			{
-				Project = e.NewValue as Models.Projects.Project;
+				Project = e.NewValue as Project;
 			}
-			else if (e.NewValue as Models.Boards.BoardList != null)
-			{
-
-			}
-			else if (e.NewValue as Models.Boards.Board != null)
-			{
-				Board = e.NewValue as Models.Boards.Board;
-			}
-			else if (e.NewValue as Models.Components.ComponentList != null)
-			{
-				ComponentList = e.NewValue as Models.Components.ComponentList;
-			}
-			else if (e.NewValue as Models.Components.Component != null)
+			else if (e.NewValue as BoardList != null)
 			{
 
 			}
-			else if (e.NewValue as Models.Mechanical.MechanicalList != null)
+			else if (e.NewValue as Board != null)
+			{
+				Board = e.NewValue as Board;
+			}
+			else if (e.NewValue as ComponentList != null)
+			{
+				ComponentList = e.NewValue as ComponentList;
+			}
+			else if (e.NewValue as Component != null)
 			{
 
 			}
-			else if (e.NewValue as Models.Mechanical.MechanicalComp != null)
+			else if (e.NewValue as MechanicalList != null)
 			{
 
 			}
-			else if (e.NewValue as Models.Wires.WireList != null)
+			else if (e.NewValue as MechanicalComp != null)
 			{
 
 			}
-			else if (e.NewValue as Models.Wires.Wire != null)
+			else if (e.NewValue as WireList != null)
+			{
+
+			}
+			else if (e.NewValue as Wire != null)
 			{
 
 			}
@@ -492,7 +582,10 @@ namespace ComponentsTree
 				// изменение название проекта
 				NameProjectWindow npm = new NameProjectWindow(Project.Name);
 				bool? result = npm.ShowDialog();
-				if (result != true) return;
+				if (result != true)
+				{
+					return;
+				}
 
 				Project.Name = npm.ProjectName;
 			}
@@ -510,10 +603,13 @@ namespace ComponentsTree
 		{
 			string search = comboBoxSearch.Text;
 			if (!ComboBoxCollection.Contains(search))
+			{
 				ComboBoxCollection.Add(search);
+			}
+
 			comboBoxSearch.Text = string.Empty;
 			commandSearchParts.Command.Execute(search);
-			
+
 		}
 
 		private void ComboBoxSearch_TextChanged(object sender, TextChangedEventArgs e)
@@ -528,15 +624,21 @@ namespace ComponentsTree
 			cv.Filter = s => ((string)s).IndexOf(CB.Text, StringComparison.CurrentCultureIgnoreCase) >= 0;*/
 
 			// убрать selection, если dropdown только открылся
-			var tb = (TextBox)e.OriginalSource;
+			TextBox tb = (TextBox)e.OriginalSource;
 
 			if (tb.SelectionStart != 0)
+			{
 				comboBoxSearch.SelectedItem = null; // Если набирается текст сбросить выбранный элемент
+			}
 
 			if (tb.SelectionStart == 0 && comboBoxSearch.SelectedItem == null)
+			{
 				comboBoxSearch.IsDropDownOpen = false;
+			}
 			else
+			{
 				comboBoxSearch.IsDropDownOpen = true;
+			}
 
 			tb.Select(tb.SelectionStart + tb.SelectionLength, 0);
 			CollectionView cv = (CollectionView)CollectionViewSource.GetDefaultView(comboBoxSearch.ItemsSource);
@@ -549,7 +651,10 @@ namespace ComponentsTree
 			{
 				string search = comboBoxSearch.Text;
 				if (!ComboBoxCollection.Contains(search))
+				{
 					ComboBoxCollection.Add(search);
+				}
+
 				comboBoxSearch.Text = string.Empty;
 				commandSearchParts.Command.Execute(search);
 			}

@@ -3,6 +3,7 @@ using Models.Components;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Windows;
 
 namespace SeparateAllegroSpb
 {
@@ -11,44 +12,49 @@ namespace SeparateAllegroSpb
 		public ObservableCollection<Component> ImportHtmlComponents(string fileName)
 		{
 			ObservableCollection<Component> list = new ObservableCollection<Component>();
-
-			string html = new StreamReader(fileName).ReadToEnd();
-
-			HtmlDocument htmlDocument = new HtmlDocument();
-			htmlDocument.LoadHtml(html);
-			HtmlNodeCollection nodes = htmlDocument.DocumentNode.SelectNodes("//tr");
-			nodes.Remove(0);
-			for (int i = 0; i < nodes.Count; i++)
+			try
 			{
-				HtmlNode node = nodes[i];
-				HtmlNode[] items = node.ChildNodes.Where(x => x.Name == "td").ToArray();
+				string html = new StreamReader(fileName).ReadToEnd();
 
-				Component item = new Component(items[0].InnerText); // инициализация с учетом RefDes
-
-				Package package = new Package(items[4].InnerText);
-				string value = items[2].InnerText;
-				if (SmdType(items[4].InnerText))
+				HtmlDocument htmlDocument = new HtmlDocument();
+				htmlDocument.LoadHtml(html);
+				HtmlNodeCollection nodes = htmlDocument.DocumentNode.SelectNodes("//tr");
+				nodes.Remove(0);
+				for (int i = 0; i < nodes.Count; i++)
 				{
-					package = new Package(GetPackage(items[4].InnerText));
-					value = GetValue(items[2].InnerText, items[4].InnerText);
+					HtmlNode node = nodes[i];
+					HtmlNode[] items = node.ChildNodes.Where(x => x.Name == "td").ToArray();
+
+					Component item = new Component(items[0].InnerText); // инициализация с учетом RefDes
+
+					Package package = new Package(items[4].InnerText);
+					string value = items[2].InnerText;
+					if (SmdType(items[4].InnerText))
+					{
+						package = new Package(GetPackage(items[4].InnerText));
+						value = GetValue(items[2].InnerText, items[4].InnerText);
+					}
+					item.Description = value;
+
+					SubComponent subComponent = new SubComponent(value)
+					{
+						Package = package
+					};
+
+					item.Names.Add(subComponent);
+
+					if (items[6].InnerText == "&nbsp;")
+					{
+						continue;
+					}
+
+					list.Add(item);
 				}
-				item.Description = value;
-
-				SubComponent subComponent = new SubComponent(value)
-				{
-					Package = package
-				};
-
-				item.Names.Add(subComponent);
-
-				if (items[6].InnerText == "&nbsp;")
-				{
-					continue;
-				}
-
-				list.Add(item);
 			}
-
+			catch(IOException ex)
+			{
+				MessageBox.Show("Файл открыт другим приложением", "Каталог компонентов", MessageBoxButton.OK, MessageBoxImage.Error);
+			}
 			return list;
 		}
 
