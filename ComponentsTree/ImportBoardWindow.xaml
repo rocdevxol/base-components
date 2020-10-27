@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ComponentsTree"
         mc:Ignorable="d"
-        Title="Импорт печатной платы" Height="450" Width="400" Loaded="Window_Loaded">
+        Title="Импорт печатной платы" Height="450" Width="400" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner">
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="*"/>

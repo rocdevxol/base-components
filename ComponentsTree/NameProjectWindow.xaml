@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ComponentsTree"
         mc:Ignorable="d"
-        Title="Создать проект" Loaded="Window_Loaded" Height="140" Width="350">
+        Title="Создать проект" Loaded="Window_Loaded" Height="140" Width="350" WindowStartupLocation="CenterScreen">
     <Grid>
 		<Label Content="Наименование проекта:"  Margin="10,10,10,0" VerticalAlignment="Top"/>
 		<TextBox x:Name="textBoxProjectName" Margin="10,41,10,0" VerticalAlignment="Top"/>

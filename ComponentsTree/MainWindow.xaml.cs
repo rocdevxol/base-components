@@ -20,7 +20,7 @@ namespace ComponentsTree
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		#region данные
+		#region Данные
 		/// <summary>
 		/// Перечень проектов в дереве
 		/// </summary>
@@ -314,6 +314,63 @@ namespace ComponentsTree
 
 		#endregion
 
+		#region ContextMenu Project
+		/// <summary>
+		/// Переименовать проект
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void RenameProject_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (Project == null) return;
+			NameProjectWindow nameProjectWindow = new NameProjectWindow(Project.Name);
+			bool? result = nameProjectWindow.ShowDialog();
+			if (result == true)
+			{
+				Project.Name = nameProjectWindow.ProjectName;
+			}
+		}
+		#endregion
+
+		#region ContextMenu Board
+		/// <summary>
+		/// Параметры печатной платы
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void ParametersBoard_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (Board == null) return;
+			BoardWindow boardWindow = new BoardWindow(Board);
+			bool? result = boardWindow.ShowDialog();
+			if (result == true)
+			{
+				Board.Name = boardWindow.BoardName;
+				Board.Description = boardWindow.BoardDescription;
+				Board.DecimalNumber = boardWindow.BoardDecimalNumber;
+				Board.Count = boardWindow.Count;
+			}
+		}
+
+		/// <summary>
+		/// Открыть перечень компонентов в печатной плате
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void ShowComponentsList_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+		}
+
+		/// <summary>
+		/// Открыть перечень механических компонентов в печатной плате
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void ShowMechanicalList_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+		}
+		#endregion
+
 		/// <summary>
 		/// Поиск перечня компонентов (электронных компонентов, механических компонентов, проводов)
 		/// по всем параметрам
@@ -532,6 +589,12 @@ namespace ComponentsTree
 		}
 		#endregion
 
+		#region TreeView
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void TreeViewProject_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
 		{
 			Project = null;
@@ -540,6 +603,7 @@ namespace ComponentsTree
 			if (e.NewValue as Project != null)
 			{
 				Project = e.NewValue as Project;
+				treeViewProject.ContextMenu = treeViewProject.Resources["contextProject"] as ContextMenu;
 			}
 			else if (e.NewValue as BoardList != null)
 			{
@@ -548,6 +612,7 @@ namespace ComponentsTree
 			else if (e.NewValue as Board != null)
 			{
 				Board = e.NewValue as Board;
+				treeViewProject.ContextMenu = treeViewProject.Resources["contextBoard"] as ContextMenu;
 			}
 			else if (e.NewValue as ComponentList != null)
 			{
@@ -555,7 +620,7 @@ namespace ComponentsTree
 			}
 			else if (e.NewValue as Component != null)
 			{
-
+				treeViewProject.ContextMenu = treeViewProject.Resources["contextComponent"] as ContextMenu;
 			}
 			else if (e.NewValue as MechanicalList != null)
 			{
@@ -574,7 +639,12 @@ namespace ComponentsTree
 
 			}
 		}
-
+		
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void TreeViewProject_MouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
 			if (Project != null)
@@ -598,7 +668,14 @@ namespace ComponentsTree
 				ShowComponentList();
 			}
 		}
+		#endregion
 
+		#region Search Components
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void ButtonSearch_Click(object sender, RoutedEventArgs e)
 		{
 			string search = comboBoxSearch.Text;
@@ -612,6 +689,11 @@ namespace ComponentsTree
 
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void ComboBoxSearch_TextChanged(object sender, TextChangedEventArgs e)
 		{
 			//https://ru.stackoverflow.com/questions/549935/%D0%96%D0%B8%D0%B2%D0%BE%D0%B9-%D0%BF%D0%BE%D0%B8%D1%81%D0%BA-system-windows-controls-combobox-c-wpf
@@ -645,6 +727,11 @@ namespace ComponentsTree
 			cv.Filter = s => ((string)s).IndexOf(comboBoxSearch.Text, StringComparison.CurrentCultureIgnoreCase) >= 0;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void ComboBoxSearch_KeyDown(object sender, KeyEventArgs e)
 		{
 			if (e.Key == Key.Return)
@@ -659,5 +746,6 @@ namespace ComponentsTree
 				commandSearchParts.Command.Execute(search);
 			}
 		}
+		#endregion
 	}
 }

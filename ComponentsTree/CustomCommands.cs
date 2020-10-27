@@ -6,7 +6,7 @@ namespace ComponentsTree
 {
 	public class CustomCommands : MarkupExtension
 	{
-		#region Меню "файл"
+		#region Меню "Файл"
 		/// <summary>
 		/// Создать проект
 		/// </summary>
@@ -62,6 +62,33 @@ namespace ComponentsTree
 
 		#endregion
 
+		#region Контекстное меню 
+		
+		#region Проект
+		/// <summary>
+		/// Переименовать проект
+		/// </summary>
+		public static RoutedCommand RenameProject = new RoutedCommand();
+		#endregion
+	
+		#region Плата
+		/// <summary>
+		/// Параметры платы
+		/// </summary>
+		public static RoutedCommand ParametersBoard = new RoutedCommand();
+
+		/// <summary>
+		/// Просмотр перечня компонентов
+		/// </summary>
+		public static RoutedCommand ShowComponentsList = new RoutedCommand();
+
+		/// <summary>
+		/// Просмотр перечня механических компонентов
+		/// </summary>
+		public static RoutedCommand ShowMechanicalList = new RoutedCommand();
+		#endregion
+		
+		#endregion
 
 		/// <summary>
 		/// Поиск компонентов в перечне

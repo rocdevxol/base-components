@@ -24,6 +24,12 @@
         <CommandBinding Command="local:CustomCommands.ImportBoard" Executed="ImportBoard_Executed"/>
         <CommandBinding Command="local:CustomCommands.ImportComponentAllegro" Executed="ImportComponentAllegro_Executed"/>
 
+		<CommandBinding Command="local:CustomCommands.RenameProject" Executed="RenameProject_Executed"/>
+
+		<CommandBinding Command="local:CustomCommands.ParametersBoard" Executed="ParametersBoard_Executed"/>
+		<CommandBinding Command="local:CustomCommands.ShowComponentsList" Executed="ShowComponentsList_Executed"/>
+		<CommandBinding Command="local:CustomCommands.ShowMechanicalList" Executed="ShowMechanicalList_Executed"/>
+		
         <CommandBinding x:Name="commandSearchParts" Command="local:CustomCommands.SearchParts" Executed="SearchParts_Executed"/>
     </Window.CommandBindings>
 
@@ -121,13 +127,10 @@
                 <Image Width="20" Height="20" Source="{StaticResource Find}"/>
             </Button>
 
-
-
-
             <TreeView x:Name="treeViewProject" Grid.Row="1" Margin="0,5,0,0" SelectedItemChanged="TreeViewProject_SelectedItemChanged" MouseDoubleClick="TreeViewProject_MouseDoubleClick">
                 <TreeView.Resources>
                     <ContextMenu x:Key="contextProject">
-                        <MenuItem Header="Переименовать"/>
+						<MenuItem Header="Переименовать" Command="local:CustomCommands.RenameProject"/>
                         <Separator/>
                         <MenuItem Header="Просмотр перечня механических компонентов"/>
                         <MenuItem Header="Просмотр перечня проводов"/>
@@ -137,10 +140,10 @@
                         <MenuItem Header="Экспорт проекта"/>
                     </ContextMenu>
                     <ContextMenu x:Key="contextBoard">
-                        <MenuItem Header="Параметры платы"/>
+						<MenuItem Header="Параметры платы" Command="local:CustomCommands.ParametersBoard"/>
                         <Separator/>
-                        <MenuItem Header="Просмотр перечня компонентов"/>
-                        <MenuItem Header="Просмотр перечня механических компонентов"/>
+						<MenuItem Header="Просмотр перечня компонентов" Command="local:CustomCommands.ShowComponentsList"/>
+						<MenuItem Header="Просмотр перечня механических компонентов" Command="local:CustomCommands.ShowMechanicalList"/>
                         <Separator/>
                         <MenuItem Header="Экспорт платы"/>
                     </ContextMenu>

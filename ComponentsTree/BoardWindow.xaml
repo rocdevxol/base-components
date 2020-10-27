@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ComponentsTree"
         mc:Ignorable="d"
-        Title="Добавить печатную плату" Loaded="Window_Loaded" Height="404.721" Width="550">
+        Title="Добавить печатную плату" Loaded="Window_Loaded" Height="404.721" Width="550" WindowStartupLocation="CenterOwner">
     <Grid>
         <Label Content="Наименование платы:"  Margin="10,10,10,0" VerticalAlignment="Top"/>
         <TextBox x:Name="textBoxBoardName" Margin="10,41,10,0" VerticalAlignment="Top"/>

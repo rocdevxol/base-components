@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using Models.Boards;
+using System.Windows;
 
 namespace ComponentsTree
 {
@@ -11,6 +12,16 @@ namespace ComponentsTree
 		public string BoardDescription;
 		public string BoardDecimalNumber;
 		public int Count;
+
+		public BoardWindow(Board board)
+		{
+			InitializeComponent();
+
+			BoardName = board.Name;
+			BoardDescription = board.Description;
+			BoardDecimalNumber = board.DecimalNumber;
+			Count = board.Count;
+		}
 
 		public BoardWindow(string name, string descritpion, string decimalNumber, int count)
 		{
@@ -26,6 +37,7 @@ namespace ComponentsTree
 		{
 			textBoxBoardName.Text = BoardName;
 			textBoxBoardDescription.Text = BoardDescription;
+			textBoxDecimalNumber.Text = BoardDecimalNumber;
 
 			for (int i = 1; i <= 10; i++)
 				comboBoxCount.Items.Add(i);
