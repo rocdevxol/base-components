@@ -57,9 +57,16 @@
 			</Button>
 			<Separator/>
 			<Button Content="Экспорт RefDes" Command="local:CommandsShowModels.ExportRefDesComponents"/>
-			<Button Content="Экспорт Обощенный" Command="local:CommandsShowModels.ExportComponents"/>
-
+			<Button Content="Экспорт BOM" Command="local:CommandsShowModels.ExportComponents"/>
 		</ToolBar>
+		<StatusBar DockPanel.Dock="Bottom">
+			<StatusBarItem>
+				<StackPanel Orientation="Horizontal">
+					<TextBlock Text="Общая стоимость:"/>
+					<TextBlock x:Name="textBlockTotalPrice" Text="" Margin="5,0,0,0"/>
+				</StackPanel>
+			</StatusBarItem>
+		</StatusBar>
 		<TabControl SelectionChanged="TabControl_SelectionChanged" >
 			<TabItem Header="Позиционное обозначение">
 				<DataGrid x:Name="dataGridRefDes" AutoGenerateColumns="False" HorizontalGridLinesBrush="Gray" VerticalGridLinesBrush="Gray"

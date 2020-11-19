@@ -154,7 +154,8 @@ namespace Models.Components
 			{
 				Package = (Package)Package?.Clone(),
 				Developer = (Developer)Developer?.Clone(),
-				Distributor = (Distributor)Distributor?.Clone()
+				Distributor = (Distributor)Distributor?.Clone(),
+				Price = Price
 			};
 			return sub;
 		}

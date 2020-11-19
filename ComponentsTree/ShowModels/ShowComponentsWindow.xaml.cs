@@ -46,12 +46,20 @@ namespace ComponentsTree.ShowModels
 
 				Models.ReportComponents report = new Models.ReportComponents(ComponentsCollection);
 				ComponentsReport = report.UpdateReport();
+
+				ComponentsCollection.CollectionChanged += ComponentsCollection_CollectionChanged;
+				CalculatePrice();
 			}
 			catch// (Exception ex)
 			{
 				MessageBox.Show("Сохраните, если вносились изменения. И переоткройте проект");
 				Close();
 			}
+		}
+
+		private void ComponentsCollection_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+		{
+			CalculatePrice();
 		}
 
 		#region Команды
@@ -128,6 +136,7 @@ namespace ComponentsTree.ShowModels
 			int empty = ClearEmptyParts();
 			CheckComponents();
 			SortComponents();
+			CalculatePrice();
 		}
 
 		/// <summary>
@@ -149,7 +158,7 @@ namespace ComponentsTree.ShowModels
 		{
 			Models.ReportComponents report = new Models.ReportComponents(ComponentsCollection);
 			ObservableCollection<Models.Components.Component> result = report.UpdateReport();
-			ExportExcel.ExcelExportTotalComps.ExportDataToExcel(ExportExcel.ExcelExportTotalComps.CreateDataToExport(result));
+			ExportExcel.ExcelExportBOM.ExportDataToExcel(ExportExcel.ExcelExportBOM.CreateDataToExport(result));
 		}
 		#endregion
 
@@ -210,9 +219,9 @@ namespace ComponentsTree.ShowModels
 
 		private void DataGridRefDes_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
 		{
-			for (int i = 0; i <= 100; i++)
+			if (e.Column.DisplayIndex == 6) // Price
 			{
-				;
+				CalculatePrice();
 			}
 		}
 		#endregion
@@ -265,6 +274,7 @@ namespace ComponentsTree.ShowModels
 			copy.RefDes = change.RefDes;
 
 			int index = ComponentsCollection.IndexOf(change);
+			if (index == -1) return;
 			ComponentsCollection.RemoveAt(index);
 			ComponentsCollection.Insert(index, copy);
 		}
@@ -410,6 +420,17 @@ namespace ComponentsTree.ShowModels
 			ComponentsCollection.OrderBy(x => x.RefDes);
 		}
 
+		private void CalculatePrice()
+		{
+			double price = 0;
+			foreach (Models.Components.Component component in ComponentsCollection)
+			{
+				if (component == null) continue;
+				if (component.Names.Count == 0) continue;
+				price += component.Names[0].Price * component.Count;
+			}
+			textBlockTotalPrice.Text = price.ToString("F2");
+		}
 		#endregion
 	}
 }

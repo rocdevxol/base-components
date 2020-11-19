@@ -43,7 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ExcelExportTotalComps.cs" />
+    <Compile Include="ExcelExportBuying.cs" />
+    <Compile Include="ExcelExportBOM.cs" />
     <Compile Include="ExcelPrepare.cs" />
     <Compile Include="ExcelRefDesBoard.cs" />
     <Compile Include="ExportMechanicalComponents.cs" />

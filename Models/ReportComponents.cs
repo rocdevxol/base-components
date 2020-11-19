@@ -94,8 +94,11 @@ namespace Models
 				int index = FindElement(component, ref change);
 				if (index != -1)
 				{
-					if (change == false)	
+					if (change == false)
+					{
+						Report[index].UpdateRefDes(component.RefDes);
 						Report[index].UpdateCount(component.Count);
+					}
 					else
 					{
 						Components.Component oldComponent = Report[index];

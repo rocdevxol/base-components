@@ -6,7 +6,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace ExportExcel
 {
-	public static class ExcelExportTotalComps
+	public static class ExcelExportBOM
 	{
 		private static object[,] Data
 		{
@@ -32,26 +32,28 @@ namespace ExportExcel
 					countNames = component.Names.Count;
 			}
 
-			object[,] data = new object[list.Count + 1, 3 + 2 * countNames];
+			object[,] data = new object[list.Count + 1, 4 + 2 * countNames];
 			for (int i = 1; i <= list.Count; i++)
 			{
-				data[i, 0] = list[i - 1].TypeComponent;
-				data[i, 1] = list[i - 1].Description;
-				data[i, 2] = list[i - 1].Count;
+				data[i, 0] = list[i - 1].RefDes;
+				data[i, 1] = list[i - 1].TypeComponent;
+				data[i, 2] = list[i - 1].Description;
+				data[i, 3] = list[i - 1].Count;
 				for (int j = 0; j < list[i - 1].Names.Count; j++)
 				{
-					data[i, 3 + j * 2] = list[i - 1].Names[j].Name;
-					data[i, 4 + j * 2] = list[i - 1].Names[j].Package.Name;
+					data[i, 4 + j * 2] = list[i - 1].Names[j].Name;
+					data[i, 5 + j * 2] = list[i - 1].Names[j].Package.Name;
 				}
 			}
 
-			data[0, 0] = "Тип компонента";
-			data[0, 1] = "Описание";
-			data[0, 2] = "Количество";
+			data[0, 0] = "Поз. обозн.";
+			data[0, 1] = "Тип компонента";
+			data[0, 2] = "Описание";
+			data[0, 3] = "Количество";
 			for (int j = 0; j < countNames; j++)
 			{
-				data[0, 3 + j * 2] = string.Format("Наименование {0}", j + 1);
-				data[0, 4 + j * 2] = string.Format("Корпус {0}", j + 1);
+				data[0, 4 + j * 2] = string.Format("Наименование {0}", j + 1);
+				data[0, 5 + j * 2] = string.Format("Корпус {0}", j + 1);
 			}
 			
 			return data;

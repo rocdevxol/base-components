@@ -161,6 +161,11 @@ namespace Models.Components
 			Count += addCount;
 		}
 
+		public void UpdateRefDes(string refDes)
+		{
+			RefDes = string.Format($"{RefDes}, {refDes}");
+		}
+
 		#region Events
 		[field: NonSerialized]
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -169,6 +174,8 @@ namespace Models.Components
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
+
+
 		#endregion
 
 		public override string ToString()

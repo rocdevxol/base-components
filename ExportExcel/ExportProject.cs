@@ -57,7 +57,7 @@ namespace ExportExcel
 
 				report.UpdateReport();
 				excel.AddSheet("Перечень для закупки");
-				ExcelExportTotalComps.ExportData(excel.ExcelWorkSheet, report.Report);
+				ExcelExportBuying.ExportData(excel.ExcelWorkSheet, report.Report);
 
 				excel.Update();
 				excel.VisibleExcel(true);
@@ -82,7 +82,7 @@ namespace ExportExcel
 
 			report.UpdateReport();
 			excel.AddSheet("Перечень для закупки");
-			ExcelExportTotalComps.ExportData(excel.ExcelWorkSheet, report.Report);
+			ExcelExportBOM.ExportData(excel.ExcelWorkSheet, report.Report);
 
 			excel.Update();
 			excel.VisibleExcel(true);
