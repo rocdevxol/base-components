@@ -114,8 +114,13 @@
 
         </ToolBar>
         <StatusBar DockPanel.Dock="Bottom">
-
-        </StatusBar>
+			<StatusBarItem>
+				<StackPanel Orientation="Horizontal">
+					<TextBlock Text="Общая стоимость:"/>
+					<TextBlock x:Name="textBlockTotalPrice" Text="0,00" Margin="5,0,0,0"/>
+				</StackPanel>
+			</StatusBarItem>
+		</StatusBar>
         <Grid x:Name="LayoutRoot">
             <Grid.RowDefinitions>
                 <RowDefinition Height="25"/>

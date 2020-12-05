@@ -303,7 +303,8 @@ namespace Models.Components
 				if (char.IsDigit(c))
 					format.Append(c);
 			}
-			return int.Parse(format.ToString());
+			string result = format.ToString();
+			return int.Parse(result != String.Empty ? result : "0");
 		}
 
 
