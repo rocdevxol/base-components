@@ -23,16 +23,16 @@ namespace ExportExcel
 
 		public ExcelPrepare(string name)
 		{
-				ExcelApp = new Excel.Application();
+			ExcelApp = new Excel.Application();
 
-				if (ExcelApp == null)
-				{
-					MessageBox.Show("Экспорт в Excel", "Excel не установлен", MessageBoxButton.OK, MessageBoxImage.Error);
-					return;
-				}
+			if (ExcelApp == null)
+			{
+				MessageBox.Show("Экспорт в Excel", "Excel не установлен", MessageBoxButton.OK, MessageBoxImage.Error);
+				return;
+			}
 
-				ExcelWorkBook = ExcelApp.Workbooks.Add(misValue);
-				//ExcelWorkBook.Name = name;
+			ExcelWorkBook = ExcelApp.Workbooks.Add(misValue);
+			//ExcelWorkBook.Name = name;
 		}
 
 		public void AddSheet(string name)
