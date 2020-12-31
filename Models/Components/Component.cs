@@ -21,6 +21,7 @@ namespace Models.Components
 		private int count;
 		private double price;
 		private ObservableCollection<SubComponent> names;
+		private Position position;
 
 		/// <summary>
 		/// Позиционное обозначение компонента
@@ -121,6 +122,23 @@ namespace Models.Components
 		}
 
 		/// <summary>
+		/// Местоположение компонента на плате
+		/// </summary>
+		public Position Position
+		{
+			get => position;
+			set
+			{
+				if (position != value)
+				{
+					position = value;
+					NotifyPropertyChanged();
+				}
+			}
+		}
+
+
+		/// <summary>
 		/// Покупное наименование
 		/// </summary>
 		public ObservableCollection<SubComponent> Names
@@ -142,6 +160,7 @@ namespace Models.Components
 			Soldering = true;
 			Count = 1;
 			Price = 0;
+			Position = new Position();
 			Names = new ObservableCollection<SubComponent>();
 			Names.CollectionChanged += Names_CollectionChanged;
 		}
@@ -217,7 +236,8 @@ namespace Models.Components
 				TypeComponent = TypeComponent,
 				Description = Description,
 				Count = Count,
-				Price = Price
+				Price = Price,
+				Position = (Position)Position?.Clone()
 			};
 			foreach (SubComponent sub in Names)
 				component.Names.Add((SubComponent)sub.Clone());

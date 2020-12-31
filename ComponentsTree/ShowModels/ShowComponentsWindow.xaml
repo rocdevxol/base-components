@@ -39,7 +39,9 @@
 		<CommandBinding Command="local:CommandsShowModels.ChangeComponent" Executed="ChangeComponent_Executed"/>
 		<CommandBinding Command="local:CommandsShowModels.CheckComponents" Executed="CheckComponents_Executed"/>
 		<CommandBinding Command="local:CommandsShowModels.ExportRefDesComponents" Executed="ExportRefDesComponents_Executed"/>
-		<CommandBinding Command="local:CommandsShowModels.ExportComponents" Executed="ExportComponents_Executed"/>
+		<CommandBinding Command="local:CommandsShowModels.ExportBOMComponents" Executed="ExportBOMComponents_Executed"/>
+		<CommandBinding Command="local:CommandsShowModels.ExportJLCPosition" Executed="ExportJLCPosition_Executed"/>
+		<CommandBinding Command="local:CommandsShowModels.ExportLCSC" Executed="ExportLCSC_Executed"/>
 	</Window.CommandBindings>
 	<DockPanel>
 		<ToolBar DockPanel.Dock="Top">
@@ -56,8 +58,11 @@
 				<Image Width="24" Height="24" Source="{StaticResource Refresh}"/>
 			</Button>
 			<Separator/>
-			<Button Content="Экспорт RefDes" Command="local:CommandsShowModels.ExportRefDesComponents"/>
-			<Button Content="Экспорт BOM" Command="local:CommandsShowModels.ExportComponents"/>
+			<Button Content="Экспорт RefDes" ToolTip="Экспорт RefDes" Command="local:CommandsShowModels.ExportRefDesComponents"/>
+			<Button Content="Экспорт BOM" ToolTip="Экспорт BOM" Command="local:CommandsShowModels.ExportBOMComponents"/>
+			<Separator/>
+			<Button Content="Экспорт JLC положения" ToolTip="Экспорт JLC положения" Command="local:CommandsShowModels.ExportJLCPosition"/>
+			<Button Content="Экспорт LCSC" ToolTip="Экспорт LCSC" Command="local:CommandsShowModels.ExportLCSC"/>
 		</ToolBar>
 		<StatusBar DockPanel.Dock="Bottom">
 			<StatusBarItem>

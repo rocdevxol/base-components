@@ -33,10 +33,19 @@ namespace ComponentsTree.ShowModels
 		public static RoutedCommand ExportRefDesComponents = new RoutedCommand();
 
 		/// <summary>
+		/// Экспорт перечня компонентов BOM
+		/// </summary>
+		public static RoutedCommand ExportBOMComponents = new RoutedCommand();
+
+		/// <summary>
 		/// Экспорт перечня компонентов обобщенный
 		/// </summary>
-		public static RoutedCommand ExportComponents = new RoutedCommand();
+		public static RoutedCommand ExportJLCPosition = new RoutedCommand();
 
+		/// <summary>
+		/// Экспорт перечня компонентов обобщенный
+		/// </summary>
+		public static RoutedCommand ExportLCSC = new RoutedCommand();
 
 		public override object ProvideValue(IServiceProvider serviceProvider)
 		{

@@ -154,7 +154,31 @@ namespace ComponentsTree.ShowModels
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		private void ExportComponents_Executed(object sender, ExecutedRoutedEventArgs e)
+		private void ExportBOMComponents_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			Models.ReportComponents report = new Models.ReportComponents(ComponentsCollection);
+			ObservableCollection<Models.Components.Component> result = report.UpdateReport();
+			ExportExcel.ExcelExportBOM.ExportDataToExcel(ExportExcel.ExcelExportBOM.CreateDataToExport(result));
+		}
+
+		/// <summary>
+		/// Экспорт координат для JLC
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void ExportJLCPosition_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			Models.ReportComponents report = new Models.ReportComponents(ComponentsCollection);
+			ObservableCollection<Models.Components.Component> result = report.UpdateReport();
+			ExportExcel.ExcelExportBOM.ExportDataToExcel(ExportExcel.ExcelExportBOM.CreateDataToExport(result));
+		}
+
+		/// <summary>
+		/// Экспорт информации о компонентах
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void ExportLCSC_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
 			Models.ReportComponents report = new Models.ReportComponents(ComponentsCollection);
 			ObservableCollection<Models.Components.Component> result = report.UpdateReport();

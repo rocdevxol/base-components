@@ -56,6 +56,7 @@
     <Compile Include="Components\Distributor.cs" />
     <Compile Include="Components\Package.cs" />
     <Compile Include="Components\PackageType.cs" />
+    <Compile Include="Components\Position.cs" />
     <Compile Include="Components\SubComponent.cs" />
     <Compile Include="Converters\EnumDescriptionTypeConverter.cs" />
     <Compile Include="ConvertProjects.cs" />

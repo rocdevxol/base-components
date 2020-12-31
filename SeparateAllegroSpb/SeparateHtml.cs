@@ -34,6 +34,7 @@ namespace SeparateAllegroSpb
 						package = new Package(GetPackage(items[4].InnerText));
 						value = GetValue(items[2].InnerText, items[4].InnerText);
 					}
+
 					item.Description = value;
 
 					SubComponent subComponent = new SubComponent(value)
@@ -47,6 +48,8 @@ namespace SeparateAllegroSpb
 					{
 						continue;
 					}
+					Position position = new Position(ConvertToDouble(items[5].InnerText), ConvertToDouble(items[6].InnerText), ConvertToDouble(items[7].InnerText), items[8].InnerText == "NO" ? false : true);
+					item.Position = position;
 
 					list.Add(item);
 				}
@@ -56,6 +59,24 @@ namespace SeparateAllegroSpb
 				MessageBox.Show("Файл открыт другим приложением", "Каталог компонентов", MessageBoxButton.OK, MessageBoxImage.Error);
 			}
 			return list;
+		}
+
+		/// </summary>
+		/// <param name="p"></param>
+		/// <returns></returns>
+		private double ConvertToDouble(string S)
+		{
+			if (S == string.Empty || S == "&nbsp;") return 0;
+			try
+			{
+				if (S.IndexOf('.') != -1) S = S.Replace(".", ",");
+				return double.Parse(S);
+			}
+			catch
+			{
+				if (S.IndexOf(',') != -1) S = S.Replace(",", ".");
+				return double.Parse(S);
+			}
 		}
 
 		private bool SmdType(string package)

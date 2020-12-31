@@ -15,6 +15,7 @@ namespace Models.Components
 		private Developer developer;
 		private Distributor distributor;
 		private double price;
+		private string lcsc;
 
 		/// <summary>
 		/// Покупное наименование компонента
@@ -96,6 +97,23 @@ namespace Models.Components
 			}
 		}
 
+		/// <summary>
+		/// Код для монтажа на JLC
+		/// </summary>
+		public string LCSC
+		{
+			get => lcsc;
+			set
+			{
+				if (lcsc != value)
+				{
+					lcsc = value;
+					NotifyPropertyChanged();
+				}
+			}
+		}
+
+
 		public SubComponent(string name)
 		{
 			Name = name;
@@ -103,6 +121,7 @@ namespace Models.Components
 			Distributor = new Distributor(string.Empty);
 			Package = new Package(string.Empty);
 			Price = 0;
+			LCSC = String.Empty;
 		}
 
 		public SubComponent() : this(string.Empty)
@@ -155,7 +174,8 @@ namespace Models.Components
 				Package = (Package)Package?.Clone(),
 				Developer = (Developer)Developer?.Clone(),
 				Distributor = (Distributor)Distributor?.Clone(),
-				Price = Price
+				Price = Price,
+				LCSC = LCSC
 			};
 			return sub;
 		}
