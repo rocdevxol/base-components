@@ -215,7 +215,8 @@ namespace Models.Components
 
 		public int CompareTo(Component obj)
 		{
-			int result = Description.CompareTo(obj.Description);
+			int result = 0;
+			if (Description != null && obj.Description != null) result = Description.CompareTo(obj.Description);
 			if (result != 0) return result;
 			if (Names.Count == obj.Names.Count)
 			{
