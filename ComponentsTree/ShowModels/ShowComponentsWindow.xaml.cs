@@ -40,6 +40,7 @@ namespace ComponentsTree.ShowModels
 			try
 			{
 				dataGridRefDes.ItemsSource = ComponentsCollection;
+				dataGridPosition.ItemsSource = ComponentsCollection;
 				//dataGridRefDes.ItemsSource = new ObservableCollection<Models.Components.Component>(ComponentsCollection);
 
 				GenerateDataGridColumns(dataGridRefDes, CountColumnsSubComponent);
@@ -168,9 +169,18 @@ namespace ComponentsTree.ShowModels
 		/// <param name="e"></param>
 		private void ExportJLCPosition_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			Models.ReportComponents report = new Models.ReportComponents(ComponentsCollection);
-			ObservableCollection<Models.Components.Component> result = report.UpdateReport();
-			ExportExcel.ExcelExportBOM.ExportDataToExcel(ExportExcel.ExcelExportBOM.CreateDataToExport(result));
+			ObservableCollection<Models.Components.Component> components = new ObservableCollection<Models.Components.Component>();
+			foreach (Models.Components.Component component in ComponentsCollection)
+			{
+				if (checkBoxOnlySmdParts.IsChecked == true)
+				{
+					if (component.Names[0].Package.PackageType == Models.Components.PackageType.SMD_SMT)
+						components.Add(component);
+				}
+				else
+					components.Add(component);
+			}
+			ExportExcel.ExcelExportPosition.ExportDataToExcel(ExportExcel.ExcelExportPosition.CreateDataToExport(components));
 		}
 
 		/// <summary>
@@ -180,9 +190,21 @@ namespace ComponentsTree.ShowModels
 		/// <param name="e"></param>
 		private void ExportLCSC_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			Models.ReportComponents report = new Models.ReportComponents(ComponentsCollection);
+			ObservableCollection<Models.Components.Component> components = new ObservableCollection<Models.Components.Component>();
+			foreach (Models.Components.Component component in ComponentsCollection)
+			{
+				if (checkBoxOnlySmdParts.IsChecked == true)
+				{
+					if (component.Names[0].Package.PackageType == Models.Components.PackageType.SMD_SMT)
+						components.Add(component);
+				}
+				else
+					components.Add(component);
+			}
+
+			Models.ReportComponents report = new Models.ReportComponents(components);
 			ObservableCollection<Models.Components.Component> result = report.UpdateReport();
-			ExportExcel.ExcelExportBOM.ExportDataToExcel(ExportExcel.ExcelExportBOM.CreateDataToExport(result));
+			ExportExcel.ExcelExportLCSC.ExportDataToExcel(ExportExcel.ExcelExportLCSC.CreateDataToExport(result));
 		}
 		#endregion
 
@@ -447,14 +469,63 @@ namespace ComponentsTree.ShowModels
 		private void CalculatePrice()
 		{
 			double price = 0;
+			int smdComps = 0, thtComps = 0;
+			int smdPins = 0, thtPins = 0;
 			foreach (Models.Components.Component component in ComponentsCollection)
 			{
 				if (component == null) continue;
 				if (component.Names.Count == 0) continue;
 				price += component.Names[0].Price * component.Count;
+				if (component.Names[0].Package.PackageType == Models.Components.PackageType.SMD_SMT)
+				{
+					smdComps++;
+					smdPins += component.Names[0].Package.NumPins;
+				}
+				else if (component.Names[0].Package.PackageType == Models.Components.PackageType.THT)
+				{
+					thtComps++;
+					thtPins += component.Names[0].Package.NumPins;
+				}
 			}
 			textBlockTotalPrice.Text = price.ToString("F2");
+			textBlockThtComps.Text = string.Format($"{thtComps} ({thtPins})");
+			textBlockSmdComps.Text = string.Format($"{smdComps} ({smdPins})");
 		}
 		#endregion
+
+		private void ButtonOffsetAll_Click(object sender, RoutedEventArgs e)
+		{
+			double dx = double.Parse(textBoxDx.Text);
+			double dy = double.Parse(textBoxDy.Text);
+
+			foreach (Models.Components.Component component in ComponentsCollection)
+			{
+				if (component == null) continue;
+
+				component.Position.PositionX += dx;
+				component.Position.PositionY += dy;
+			}
+		}
+
+		private void ButtonOffsetSelected_Click(object sender, RoutedEventArgs e)
+		{
+
+		}
+
+		private void ButtonRotateClockwise_Click(object sender, RoutedEventArgs e)
+		{
+			if (dataGridPosition.CurrentItem == null) return;
+			Models.Components.Component component = dataGridPosition.CurrentItem as Models.Components.Component;
+			component.Position.Angle += 90;
+			if (component.Position.Angle > 360) component.Position.Angle -= 360;
+		}
+
+		private void ButtonRotateCounterClockwise_Click(object sender, RoutedEventArgs e)
+		{
+			if (dataGridPosition.CurrentItem == null) return;
+			Models.Components.Component component = dataGridPosition.CurrentItem as Models.Components.Component;
+			component.Position.Angle -= 90;
+			if (component.Position.Angle < 0) component.Position.Angle += 360;
+		}
 	}
 }
