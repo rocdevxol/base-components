@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ComponentsTree.ShowModels.EditionArrays"
         mc:Ignorable="d"
-        Title="Добавить компонент" Height="450" Width="450" Loaded="Window_Loaded">
+        Title="Добавить компонент" Height="450" Width="550" Loaded="Window_Loaded">
 	<Window.Resources>
 		<Style x:Key="CenterCellStyle" TargetType="DataGridCell">
 			<Setter Property="Template">
@@ -62,7 +62,7 @@
 				<DataGridTextColumn Header="Поставщик" Binding="{Binding Distributor.Name}" CellStyle="{StaticResource CenterCellStyle}"/>
 				<DataGridTextColumn Header="Корпус" Binding="{Binding Package.Name}" CellStyle="{StaticResource CenterCellStyle}"/>
 				<DataGridTextColumn Header="Кол-во выводов" Binding="{Binding Package.NumPins}" CellStyle="{StaticResource CenterCellStyle}"/>
-				<DataGridComboBoxColumn Header="Тип монтажа" ItemsSource="{Binding Package.NumPins}" CellStyle="{StaticResource CenterCellStyle}"/>
+				<DataGridComboBoxColumn Header="Тип монтажа" ItemsSource="{Binding Package.PackageType}" CellStyle="{StaticResource CenterCellStyle}"/>
 			</DataGrid.Columns>
 		</DataGrid>
 		

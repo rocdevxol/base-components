@@ -37,13 +37,23 @@ namespace ExportExcel
 			for (int i = 1; i <= list.Count; i++)
 			{
 				data[i, 0] = list[i - 1].RefDes;
-				data[i, 1] = list[i - 1].Position.PositionX.ToString("F4").Replace(',', '.');
-				data[i, 2] = list[i - 1].Position.PositionY.ToString("F4").Replace(',', '.');
-				if (list[i - 1].Position.Mirror == false)
-					data[i, 3] = "Top";
+				if (list[i - 1].Position != null)
+				{
+					data[i, 1] = list[i - 1].Position.PositionX.ToString("F4").Replace(',', '.');
+					data[i, 2] = list[i - 1].Position.PositionY.ToString("F4").Replace(',', '.');
+					if (list[i - 1].Position.Mirror == false)
+						data[i, 3] = "Top";
+					else
+						data[i, 3] = "Bottom";
+					data[i, 4] = list[i - 1].Position.Angle.ToString().Replace(',', '.');
+				}
 				else
-					data[i, 3] = "Bottom";
-				data[i, 4] = list[i - 1].Position.Angle.ToString().Replace(',', '.');
+				{
+					data[i, 1] = "";
+					data[i, 2] = "";
+					data[i, 3] = "";
+					data[i, 4] = "";
+				}
 			}
 
 			data[0, 0] = "Designator";

@@ -136,8 +136,16 @@
 						<Button x:Name="buttonOffsetAll" Content="Переместить все компоненты" ToolTip="Переместить все компоненты на плате" Click="ButtonOffsetAll_Click"/>
 						<Button x:Name="buttonOffsetSelected" Content="Переместить выделенный" ToolTip="Переместить только выделенный" Click="ButtonOffsetSelected_Click"/>
 						<Separator/>
-						<Button x:Name="buttonRotateClockwise" Content="Повернуть +90" ToolTip="Повернуть по часовой стрелке на 90 градусов" Click="ButtonRotateClockwise_Click"/>
-						<Button x:Name="buttonRotateCounterClockwise" Content="Повернуть -90" ToolTip="Повернуть против часовой стрелки на 90 градусов" Click="ButtonRotateCounterClockwise_Click"/>
+						<Button x:Name="buttonRotateCounterClockwise" ToolTip="Повернуть против часовой стрелки на 90 градусов" Click="ButtonRotateCounterClockwise_Click">
+							<Image Width="24" Height="24" Source="{StaticResource RotateCounterclockwise}"/>
+						</Button>
+						<Button x:Name="buttonRotateClockwise" ToolTip="Повернуть по часовой стрелке на 90 градусов" Click="ButtonRotateClockwise_Click">
+							<Image Width="24" Height="24" Source="{StaticResource RotateClockwise}"/>
+						</Button>
+						<Separator/>
+						<Button x:Name="buttonImportPosition" ToolTip="Импорт положения всех компонентов" Click="ButtonImportPosition_Click">
+							<Image Width="24" Height="24" Source="{StaticResource Location1}"/>
+						</Button>
 					</ToolBar>
 					<DataGrid x:Name="dataGridPosition" AutoGenerateColumns="False" HorizontalGridLinesBrush="Gray" VerticalGridLinesBrush="Gray"
 					  CanUserResizeRows="False" SelectionMode="Single" ColumnHeaderHeight="30" RowHeight="24"

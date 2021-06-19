@@ -165,8 +165,9 @@
                     <!--Проект, с перечнем составляющих-->
                     <HierarchicalDataTemplate DataType="{x:Type selfP:Project}" ItemsSource="{Binding Parts, UpdateSourceTrigger=PropertyChanged}">
                         <StackPanel Orientation="Horizontal">
-                            <Viewbox Width="24" Height="24" Margin="0,0,5,0">
-                                <Image Source="{StaticResource Project}" />
+                            <Viewbox Width="16" Height="16" Margin="0,0,5,0">
+								<!--<Image Source="{StaticResource Project}" />-->
+								<Image Source="/Images/PcbProject.ico" />
                             </Viewbox>
                             <TextBlock Text="{Binding Name}"/>
                         </StackPanel>
@@ -175,9 +176,10 @@
                     <!--Перечень печатных плат-->
                     <HierarchicalDataTemplate DataType="{x:Type selfB:BoardList}" ItemsSource="{Binding Boards, UpdateSourceTrigger=PropertyChanged}">
                         <StackPanel Orientation="Horizontal">
-                            <Viewbox Width="24" Height="24" Margin="0,0,5,0">
-                                <Image Source="{StaticResource FolderBoards}" />
-                            </Viewbox>
+                            <Viewbox Width="16" Height="16" Margin="0,0,5,0">
+								<!--<Image Source="{StaticResource FolderBoards}" />-->
+								<Image Source="/Images/MultiBoardAssembly.ico" />
+							</Viewbox>
                             <TextBlock Text="{Binding}" Margin="0,0,5,0"/>
                         </StackPanel>
                     </HierarchicalDataTemplate>
@@ -186,8 +188,9 @@
                     <HierarchicalDataTemplate DataType="{x:Type selfB:Board}" ItemsSource="{Binding Parts, UpdateSourceTrigger=PropertyChanged}">
                         <StackPanel Orientation="Horizontal">
                             <CheckBox IsChecked="{Binding EnableToCalc}" VerticalAlignment="Center" Margin="2" ToolTip="Включить/исключить в проекте"/>
-                            <Viewbox Width="24" Height="24" Margin="0,0,5,0">
-                                <Image Source="{StaticResource AnswerRemove}" />
+                            <Viewbox Width="16" Height="16" Margin="0,0,5,0">
+                                <!--<Image Source="{StaticResource AnswerRemove}" />-->
+								<Image Source="/Images/Pcb.ico" />
                             </Viewbox>
                             <TextBlock Text="{Binding}" Margin="0,0,5,0" ToolTip="{Binding Description}"/>
                         </StackPanel>
@@ -196,9 +199,10 @@
                     <!--Перечень механических компонентов-->
                     <HierarchicalDataTemplate DataType="{x:Type selfM:MechanicalList}" ItemsSource="{Binding MechanicalComps, UpdateSourceTrigger=PropertyChanged}">
                         <StackPanel Orientation="Horizontal">
-                            <Viewbox Width="24" Height="24" Margin="0,0,5,0">
-                                <Image Source="{StaticResource FolderMechanicalComponents}" />
-                            </Viewbox>
+                            <Viewbox Width="16" Height="16" Margin="0,0,5,0">
+								<!--<Image Source="{StaticResource FolderMechanicalComponents}" />-->
+								<Image Source="/Images/PCBUnits.ico" />
+							</Viewbox>
                             <TextBlock Text="{Binding}" Margin="0,0,5,0"/>
                         </StackPanel>
                     </HierarchicalDataTemplate>
@@ -206,7 +210,7 @@
                     <!--Перечень проводов-->
                     <HierarchicalDataTemplate DataType="{x:Type selfW:WireList}" ItemsSource="{Binding Wires, UpdateSourceTrigger=PropertyChanged}">
                         <StackPanel Orientation="Horizontal">
-                            <Viewbox Width="24" Height="24" Margin="0,0,5,0">
+                            <Viewbox Width="16" Height="16" Margin="0,0,5,0">
                                 <Image Source="{StaticResource FolderWires}" />
                             </Viewbox>
                             <TextBlock Text="{Binding}" Margin="0,0,5,0"/>
@@ -216,8 +220,8 @@
                     <!--Перечень компонентов-->
                     <HierarchicalDataTemplate DataType="{x:Type selfC:ComponentList}" ItemsSource="{Binding Components, UpdateSourceTrigger=PropertyChanged}">
                         <StackPanel Orientation="Horizontal">
-                            <Viewbox Width="24" Height="24" Margin="0,0,5,0">
-                                <Image Source="{StaticResource AnswerAdd}" />
+                            <Viewbox Width="16" Height="16" Margin="0,0,5,0">
+								<Image Source="/Images/PcbLib.ico" />
                             </Viewbox>
                             <TextBlock Text="{Binding}" Margin="0,0,5,0"/>
                         </StackPanel>
@@ -226,8 +230,9 @@
                     <!--Описание компонента-->
                     <HierarchicalDataTemplate DataType="{x:Type selfC:Component}">
                         <StackPanel Orientation="Horizontal">
-                            <Viewbox Width="24" Height="24" Margin="0,0,5,0">
-                                <Image Source="{StaticResource ComponentVector}" />
+                            <Viewbox Width="16" Height="16" Margin="0,0,5,0">
+                                <!--<Image Source="{StaticResource ComponentVector}" />-->
+								<Image Source="/Images/DesignItem.ico" />
                             </Viewbox>
                             <TextBlock Text="{Binding RefDes}" Margin="0,0,5,0"/>
                             <TextBlock Text="[" Foreground="Blue"/>
@@ -239,7 +244,7 @@
                     <!--Описание компонента-->
                     <HierarchicalDataTemplate DataType="{x:Type selfM:MechanicalComp}">
                         <StackPanel Orientation="Horizontal">
-                            <Viewbox Width="24" Height="24" Margin="0,0,5,0">
+                            <Viewbox Width="16" Height="16" Margin="0,0,5,0">
                                 <Image Source="{StaticResource AutoCooling}" />
                             </Viewbox>
                             <TextBlock Text="{Binding Description}" Margin="0,0,5,0"/>
@@ -252,7 +257,7 @@
                     <!--Описание провода-->
                     <HierarchicalDataTemplate DataType="{x:Type selfW:Wire}">
                         <StackPanel Orientation="Horizontal">
-                            <Viewbox Width="24" Height="24" Margin="0,0,5,0">
+                            <Viewbox Width="16" Height="16" Margin="0,0,5,0">
                                 <Image Source="{StaticResource AirExchanger}" />
                             </Viewbox>
                             <TextBlock Text="{Binding Description}" Margin="0,0,5,0"/>

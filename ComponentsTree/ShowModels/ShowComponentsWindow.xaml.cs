@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using Microsoft.Win32;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -526,6 +527,37 @@ namespace ComponentsTree.ShowModels
 			Models.Components.Component component = dataGridPosition.CurrentItem as Models.Components.Component;
 			component.Position.Angle -= 90;
 			if (component.Position.Angle < 0) component.Position.Angle += 360;
+		}
+
+		private void ButtonImportPosition_Click(object sender, RoutedEventArgs e)
+		{
+			// Прежде осуществляем загрузку массива в отдельный список.
+			OpenFileDialog open = new OpenFileDialog
+			{
+				Filter = "HTML файл (*.htm, *.html)|*.htm;*.html"
+			};
+			bool? result = open.ShowDialog();
+			if (result != true)
+				return;
+			SeparateAllegroSpb.SeparateHtml separateHtml = new SeparateAllegroSpb.SeparateHtml();
+			ObservableCollection<Models.Components.Component> components = separateHtml.ImportHtmlComponents(open.FileName);
+
+			foreach (Models.Components.Component component in ComponentsCollection)
+			{
+				string refdes = component.RefDes;
+				Models.Components.Position position = null;
+				foreach (Models.Components.Component c0 in components)
+				{
+					if (c0.RefDes == refdes)
+					{
+						position = c0.Position;
+						break;
+					}
+				}
+
+				if (position != null)
+					component.Position = position;
+			}
 		}
 	}
 }
