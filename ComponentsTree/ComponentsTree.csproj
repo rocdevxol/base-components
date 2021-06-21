@@ -217,5 +217,8 @@
     <Resource Include="Images\Preferences_ProductionManager.ico" />
     <Resource Include="Images\SchLib.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Suggested name pattern.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

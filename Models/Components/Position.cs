@@ -106,6 +106,11 @@ namespace Models.Components
 		}
 		#endregion
 
+		public override string ToString()
+		{
+			string layer = mirror == true ? "Bottom" : "Top";
+			return $"[{PositionX:F4}, {PositionY:F4}], {angle:F4}, {layer}";
+		}
 
 		public object Clone()
 		{

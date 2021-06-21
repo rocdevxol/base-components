@@ -2,12 +2,14 @@
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Windows;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace ExportExcel
 {
 	public static class ExcelExportLCSC
 	{
+		private static string FileName = string.Empty;
 		private static object[,] Data
 		{
 			get;
@@ -15,10 +17,11 @@ namespace ExportExcel
 		}
 		private static Thread excelThread;
 
-		public static void ExportDataToExcel(object[,] data)
+		public static void ExportDataToExcel(object[,] data, string fileName)
 		{
+			FileName = fileName;
 			Data = data;
-			excelThread = new Thread(new ThreadStart(Export_excel));
+			excelThread = new Thread(new ThreadStart(Export_excel_v2));
 			excelThread.Start();
 		}
 
@@ -29,7 +32,9 @@ namespace ExportExcel
 			foreach (Models.Components.Component component in list)
 			{
 				if (component.Names.Count > countNames)
+				{
 					countNames = component.Names.Count;
+				}
 			}
 
 			object[,] data = new object[list.Count + 1, 4];
@@ -45,8 +50,25 @@ namespace ExportExcel
 			data[0, 1] = "Designator";
 			data[0, 2] = "Footprint";
 			data[0, 3] = "LCSC";
-			
+
 			return data;
+		}
+
+		private static void Export_excel_v2()
+		{
+			try
+			{
+				ExcelPrepare excel = new ExcelPrepare(FileName);
+				excel.AddSheet(string.Empty);
+				ExportData(excel.ExcelWorkSheet);
+				excel.Update();
+				excel.VisibleExcel(true);
+				excel.SaveFile(FileName);
+			}
+			catch (Exception e)
+			{
+				_ = MessageBox.Show(e.Message, "Экспорт в Excel", MessageBoxButton.OK, MessageBoxImage.Error);
+			}
 		}
 
 		private static void Export_excel()
@@ -104,10 +126,15 @@ namespace ExportExcel
 			Data = null;
 		}
 
-		public static void ExportData(Excel.Worksheet sheet, ObservableCollection<Models.Components.Component> list)
+		public static void ExportDataPrepare(Excel.Worksheet sheet, ObservableCollection<Models.Components.Component> list)
 		{
 			Data = CreateDataToExport(list);
 
+			ExportData(sheet);
+		}
+
+		public static void ExportData(Excel.Worksheet sheet)
+		{
 			const int left = 1;
 			const int top = 1;
 			int height = Data.GetLength(0);
@@ -124,7 +151,9 @@ namespace ExportExcel
 			rg.Value = Data;
 
 			for (int i = 1; i <= 4; i++)
+			{
 				rg.Borders[i].LineStyle = 1;
+			}
 
 			// Set auto columns width
 			rg.EntireColumn.AutoFit();
@@ -134,8 +163,6 @@ namespace ExportExcel
 			rgHeader.Font.Bold = true;
 			//rgHeader.Interior.Color = 189 * (int)Math.Pow(16, 4) + 129 * (int)Math.Pow(16, 2) + 78; // #4E81BD
 			rgHeader.Interior.Color = 247 * (int)Math.Pow(16, 4) + 235 * (int)Math.Pow(16, 2) + 221; // #4E81BD
-
 		}
-
 	}
 }

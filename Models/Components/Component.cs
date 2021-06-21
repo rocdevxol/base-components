@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -63,7 +62,11 @@ namespace Models.Components
 			get => typeComponent;
 			set
 			{
-				if (value == null) value = string.Empty;
+				if (value == null)
+				{
+					value = string.Empty;
+				}
+
 				if (typeComponent != value.Trim())
 				{
 					typeComponent = value.Trim();
@@ -80,7 +83,11 @@ namespace Models.Components
 			get => description;
 			set
 			{
-				if (value == null) value = string.Empty;
+				if (value == null)
+				{
+					value = string.Empty;
+				}
+
 				if (description != value.Trim())
 				{
 					description = value.Trim();
@@ -204,7 +211,7 @@ namespace Models.Components
 			format.Append($"Описание=\"{Description}\"\n");
 			for (int i = 0; i < Names.Count; i++)
 			{
-				format.Append(string.Format(" {0}::{1}\n",i, Names[i]));
+				format.Append(string.Format(" {0}::{1}\n", i, Names[i]));
 				if (i != Names.Count - 1)
 				{
 					format.Append(", ");
@@ -216,8 +223,16 @@ namespace Models.Components
 		public int CompareTo(Component obj)
 		{
 			int result = 0;
-			if (Description != null && obj.Description != null) result = Description.CompareTo(obj.Description);
-			if (result != 0) return result;
+			if (Description != null && obj.Description != null)
+			{
+				result = Description.CompareTo(obj.Description);
+			}
+
+			if (result != 0)
+			{
+				return result;
+			}
+
 			if (Names.Count == obj.Names.Count)
 			{
 				for (int i = 0; i < Names.Count; i++)
@@ -225,7 +240,11 @@ namespace Models.Components
 					result += Names[i].CompareTo(obj.Names[i]);
 				}
 			}
-			else return -1;
+			else
+			{
+				return -1;
+			}
+
 			return result;
 		}
 
@@ -241,7 +260,10 @@ namespace Models.Components
 				Position = (Position)Position?.Clone()
 			};
 			foreach (SubComponent sub in Names)
+			{
 				component.Names.Add((SubComponent)sub.Clone());
+			}
+
 			return component;
 		}
 
@@ -254,12 +276,17 @@ namespace Models.Components
 		public bool FindElement(string search)
 		{
 			bool result;
-		
+
 			search = search.Trim();
 			if (search[0] == '@')
+			{
 				result = FindFullContainsElement(search);
+			}
 			else
+			{
 				result = FindContainsElement(search);
+			}
+
 			return result;
 		}
 
@@ -272,13 +299,30 @@ namespace Models.Components
 		{
 			string search1 = search.Substring(1);
 			search1 = search1.Trim();
-			if (RefDes != null && RefDes.Equals(search1)) return true;
-			else if (Description != null && Description.Equals(search1)) return true;
-			else if (TypeComponent != null && TypeComponent.Equals(search1)) return true;
-			else if (Price.ToString().Equals(search1)) return true;
+			if (RefDes != null && RefDes.Equals(search1))
+			{
+				return true;
+			}
+			else if (Description != null && Description.Equals(search1))
+			{
+				return true;
+			}
+			else if (TypeComponent != null && TypeComponent.Equals(search1))
+			{
+				return true;
+			}
+			else if (Price.ToString().Equals(search1))
+			{
+				return true;
+			}
 
 			foreach (SubComponent subComponent in Names)
-				if (subComponent.FindElement(search)) return true;
+			{
+				if (subComponent.FindElement(search))
+				{
+					return true;
+				}
+			}
 
 			return false;
 		}
@@ -290,13 +334,30 @@ namespace Models.Components
 		/// <returns></returns>
 		private bool FindContainsElement(string search)
 		{
-			if (RefDes != null && RefDes.Contains(search)) return true;
-			else if (Description != null && Description.Contains(search)) return true;
-			else if (TypeComponent != null && TypeComponent.Contains(search)) return true;
-			else if (Price.ToString().Contains(search)) return true;
+			if (RefDes != null && RefDes.Contains(search))
+			{
+				return true;
+			}
+			else if (Description != null && Description.Contains(search))
+			{
+				return true;
+			}
+			else if (TypeComponent != null && TypeComponent.Contains(search))
+			{
+				return true;
+			}
+			else if (Price.ToString().Contains(search))
+			{
+				return true;
+			}
 
 			foreach (SubComponent subComponent in Names)
-				if (subComponent.FindElement(search)) return true;
+			{
+				if (subComponent.FindElement(search))
+				{
+					return true;
+				}
+			}
 
 			return false;
 		}
@@ -305,39 +366,46 @@ namespace Models.Components
 
 	public class ComponentRefdesCompare : IComparer<Component>
 	{
-		private string getStringPart(string input)
+		private string GetStringPart(string input)
 		{
 			StringBuilder format = new StringBuilder();
 			foreach (char c in input)
 			{
 				if (char.IsLetter(c))
+				{
 					format.Append(c);
+				}
 			}
 			return format.ToString();
 		}
 
-		private int getIntPart(string input)
+		private int GetIntPart(string input)
 		{
 			StringBuilder format = new StringBuilder();
 			foreach (char c in input)
 			{
 				if (char.IsDigit(c))
+				{
 					format.Append(c);
+				}
 			}
 			string result = format.ToString();
-			return int.Parse(result != String.Empty ? result : "0");
+			return int.Parse(result != string.Empty ? result : "0");
 		}
 
 
 		private int CompareHighPart(string x, string y)
 		{
-			string strX = getStringPart(x);
-			string strY = getStringPart(y);
-			int intX = getIntPart(x);
-			int intY = getIntPart(y);
+			string strX = GetStringPart(x);
+			string strY = GetStringPart(y);
+			int intX = GetIntPart(x);
+			int intY = GetIntPart(y);
 
 			int result = strX.CompareTo(strY);
-			if (result != 0) return result;
+			if (result != 0)
+			{
+				return result;
+			}
 
 			result = intX.CompareTo(intY);
 
@@ -346,8 +414,8 @@ namespace Models.Components
 
 		private int CompareLowPart(string x, string y)
 		{
-			int intX = getIntPart(x);
-			int intY = getIntPart(y);
+			int intX = GetIntPart(x);
+			int intY = GetIntPart(y);
 
 			return intX.CompareTo(intY);
 		}
@@ -356,15 +424,26 @@ namespace Models.Components
 		{
 			string[] refDesX = x.RefDes.Split(new char[] { '.' });
 			string[] refDesY = y.RefDes.Split(new char[] { '.' });
-			
+
 			int result = CompareHighPart(refDesX[0], refDesY[0]);
-			if (result != 0) return result;
+			if (result != 0)
+			{
+				return result;
+			}
+
 			if (refDesX.Length == 1 && refDesY.Length == 2)
+			{
 				result = CompareLowPart("0", refDesY[1]);
-			else if (refDesX.Length == 2 && refDesY.Length == 1) 
+			}
+			else if (refDesX.Length == 2 && refDesY.Length == 1)
+			{
 				result = CompareLowPart(refDesX[1], "0");
+			}
 			else if (refDesX.Length == 2 && refDesY.Length == 2)
+			{
 				result = CompareLowPart(refDesX[1], refDesY[1]);
+			}
+
 			return result;
 		}
 	}

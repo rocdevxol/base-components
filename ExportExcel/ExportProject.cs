@@ -46,16 +46,25 @@ namespace ExportExcel
 
 				foreach (Models.Boards.Board board in Project.GetBoardList().Boards)
 				{
-					if (!board.EnableToCalc) continue;
+					if (!board.EnableToCalc)
+					{
+						continue;
+					}
+
 					if (!string.IsNullOrEmpty(board.DecimalNumber))
+					{
 						excel.AddSheet(string.Format("{0} - Компоненты", board.Name));
+					}
 					else
+					{
 						excel.AddSheet(string.Format("{0} [{1}] - Компоненты", board.Name, board.DecimalNumber));
+					}
+
 					ExcelRefDesBoard.ExportData(excel.ExcelWorkSheet, board.GetComponentList().Components);
 					report.AddComponents(board);
 				}
 
-				report.UpdateReport();
+				_ = report.UpdateReport();
 				excel.AddSheet("Перечень для закупки");
 				ExcelExportBuying.ExportData(excel.ExcelWorkSheet, report.Report);
 
@@ -64,7 +73,7 @@ namespace ExportExcel
 			}
 			catch (Exception e)
 			{
-				MessageBox.Show(e.Message, "Экспорт в Excel", MessageBoxButton.OK, MessageBoxImage.Error);
+				_ = MessageBox.Show(e.Message, "Экспорт в Excel", MessageBoxButton.OK, MessageBoxImage.Error);
 			}
 		}
 
@@ -80,7 +89,7 @@ namespace ExportExcel
 			ExcelRefDesBoard.ExportData(excel.ExcelWorkSheet, Board.GetComponentList().Components);
 			report.AddComponents(Board);
 
-			report.UpdateReport();
+			_ = report.UpdateReport();
 			excel.AddSheet("Перечень для закупки");
 			ExcelExportBOM.ExportData(excel.ExcelWorkSheet, report.Report);
 

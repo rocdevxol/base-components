@@ -48,7 +48,7 @@ namespace SeparateAllegroSpb
 					{
 						continue;
 					}
-					Position position = new Position(ConvertToDouble(items[5].InnerText), ConvertToDouble(items[6].InnerText), ConvertToDouble(items[7].InnerText), items[8].InnerText == "NO" ? false : true);
+					Position position = new Position(ConvertToDouble(items[5].InnerText), ConvertToDouble(items[6].InnerText), ConvertToDouble(items[7].InnerText), items[8].InnerText != "NO");
 					item.Position = position;
 
 					list.Add(item);

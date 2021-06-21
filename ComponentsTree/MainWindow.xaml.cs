@@ -45,6 +45,8 @@ namespace ComponentsTree
 		/// Используется для коллекции полей ввода
 		/// </summary>
 		private ObservableCollection<string> ComboBoxCollection;
+
+		public static string ProjectFolder = string.Empty;
 		#endregion
 
 		public MainWindow()
@@ -91,6 +93,7 @@ namespace ComponentsTree
 			if (project != null)
 			{
 				Projects.Add(project);
+				ProjectFolder = project.ProjectFolder;
 			}
 		}
 
@@ -106,7 +109,7 @@ namespace ComponentsTree
 				return;
 			}
 
-			if (Project.ProjectFolder == string.Empty)
+			if (Project.FullNameProject == string.Empty)
 			{
 				SaveFileDialog sfd = new SaveFileDialog
 				{
@@ -115,19 +118,20 @@ namespace ComponentsTree
 				bool? result = sfd.ShowDialog();
 				if (result == true)
 				{
-					Project.ProjectFolder = sfd.FileName;
+					Project.FullNameProject = sfd.FileName;
+					ProjectFolder = Project.ProjectFolder;
 				}
 				else
 				{
 					return;
 				}
 			}
-			if (Project.ProjectFolder.Contains("json"))
+			if (Project.FullNameProject.Contains("json"))
 			{
 				ProjectJson projectJson = new ProjectJson(Project);
-				Serilization.JsonSerilizate(Project.ProjectFolder, projectJson);
+				Serilization.JsonSerilizate(Project.FullNameProject, projectJson);
 				// проверка на правильность сохранения файла
-				object obj = Serilization.JsonDeserilizate(Project.ProjectFolder);
+				object obj = Serilization.JsonDeserilizate(Project.FullNameProject);
 				if (obj == null)
 				{
 					MessageBox.Show("Пересохраните файл, ошибка записи");
@@ -135,7 +139,7 @@ namespace ComponentsTree
 			}
 			else
 			{
-				Serilization.BinarySerilizate(Project.ProjectFolder, Project);
+				Serilization.BinarySerilizate(Project.FullNameProject, Project);
 			}
 		}
 
@@ -159,21 +163,22 @@ namespace ComponentsTree
 			bool? result = sfd.ShowDialog();
 			if (result == true)
 			{
-				Project.ProjectFolder = sfd.FileName;
+				Project.FullNameProject = sfd.FileName;
+				ProjectFolder = Project.ProjectFolder;
 			}
 			else
 			{
 				return;
 			}
 
-			if (Project.ProjectFolder.Contains("json"))
+			if (Project.FullNameProject.Contains("json"))
 			{
 				ProjectJson projectJson = new ProjectJson(Project);
-				Serilization.JsonSerilizate(Project.ProjectFolder, projectJson);
+				Serilization.JsonSerilizate(Project.FullNameProject, projectJson);
 			}
 			else
 			{
-				Serilization.BinarySerilizate(Project.ProjectFolder, Project);
+				Serilization.BinarySerilizate(Project.FullNameProject, Project);
 			}
 		}
 
@@ -190,6 +195,7 @@ namespace ComponentsTree
 			}
 
 			Projects.Remove(Project);
+			ProjectFolder = string.Empty;
 		}
 
 
@@ -202,9 +208,10 @@ namespace ComponentsTree
 		{
 			if (Project == null)
 			{
-				MessageBox.Show(Title, "Выберете проект в дереве");
+				_ = MessageBox.Show(Title, "Выберете проект в дереве");
 				return;
 			}
+			ExportExcel.ExcelPrepare.Folder = ProjectFolder;
 			ExportExcel.ExportProject.ExportComponentList(Project);
 
 		}
@@ -322,7 +329,11 @@ namespace ComponentsTree
 		/// <param name="e"></param>
 		private void RenameProject_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (Project == null) return;
+			if (Project == null)
+			{
+				return;
+			}
+
 			NameProjectWindow nameProjectWindow = new NameProjectWindow(Project.Name);
 			bool? result = nameProjectWindow.ShowDialog();
 			if (result == true)
@@ -340,7 +351,11 @@ namespace ComponentsTree
 		/// <param name="e"></param>
 		private void ParametersBoard_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (Board == null) return;
+			if (Board == null)
+			{
+				return;
+			}
+
 			BoardWindow boardWindow = new BoardWindow(Board);
 			bool? result = boardWindow.ShowDialog();
 			if (result == true)
@@ -486,7 +501,7 @@ namespace ComponentsTree
 					return null;
 				}
 			}
-			project.ProjectFolder = open.FileName;
+			project.FullNameProject = open.FileName;
 			SortParts(project); // Сортировка частей проекта при открытии
 			return project;
 		}
@@ -600,46 +615,56 @@ namespace ComponentsTree
 			Project = null;
 			Board = null;
 			ComponentList = null;
-			if (e.NewValue as Project != null)
+			if ((e.NewValue as Project) != null)
 			{
 				Project = e.NewValue as Project;
 				treeViewProject.ContextMenu = treeViewProject.Resources["contextProject"] as ContextMenu;
+				ProjectFolder = Project.ProjectFolder;
 			}
-			else if (e.NewValue as BoardList != null)
+			else if ((e.NewValue as BoardList) != null)
 			{
 
 			}
-			else if (e.NewValue as Board != null)
+			else if ((e.NewValue as Board) != null)
 			{
 				Board = e.NewValue as Board;
 				treeViewProject.ContextMenu = treeViewProject.Resources["contextBoard"] as ContextMenu;
 			}
-			else if (e.NewValue as ComponentList != null)
+			else if ((e.NewValue as ComponentList) != null)
 			{
 				ComponentList = e.NewValue as ComponentList;
 			}
-			else if (e.NewValue as Component != null)
+			else if ((e.NewValue as Component) != null)
 			{
 				treeViewProject.ContextMenu = treeViewProject.Resources["contextComponent"] as ContextMenu;
 			}
-			else if (e.NewValue as MechanicalList != null)
+			else if ((e.NewValue as MechanicalList) != null)
 			{
 
 			}
-			else if (e.NewValue as MechanicalComp != null)
+			else if ((e.NewValue as MechanicalComp) != null)
 			{
 
 			}
-			else if (e.NewValue as WireList != null)
+			else if ((e.NewValue as WireList) != null)
 			{
 
 			}
-			else if (e.NewValue as Wire != null)
+			else if ((e.NewValue as Wire) != null)
 			{
 
 			}
+			else if ((e.NewValue as Models.Gerber.Gerber) != null)
+			{
+
+			}
+			else if ((e.NewValue as Models.Gerber.GerberLayer) != null)
+			{
+
+			}
+
 		}
-		
+
 		/// <summary>
 		/// 
 		/// </summary>
