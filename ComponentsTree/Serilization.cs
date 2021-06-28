@@ -81,7 +81,7 @@ namespace ComponentsTree
 				string json = File.ReadAllText(fileName);
 				obj = new JavaScriptSerializer().Deserialize<Models.Projects.ProjectJson>(json);
 			}
-			catch //(ArgumentException ex)
+			catch (ArgumentException ex)
 			{
 				MessageBox.Show("Файл содержит ошибку, проверьте правильность файла", "Открытие файла");
 			}
