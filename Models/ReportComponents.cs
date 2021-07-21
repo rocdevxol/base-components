@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Collections.ObjectModel;
 
 namespace Models
 {
@@ -53,15 +47,23 @@ namespace Models
 		{
 			ObservableCollection<Components.Component> temp;
 			if (board.EnableToCalc == true)
-			{ 
+			{
 				temp = new ObservableCollection<Components.Component>();
 				foreach (Components.Component component in board.GetComponentList().Components)
+				{
 					temp.Add((Components.Component)component.Clone());
+				}
+
 				foreach (Components.Component component in temp)
+				{
 					component.Count *= board.Count;
+				}
 			}
 			else
+			{
 				temp = new ObservableCollection<Components.Component>();
+			}
+
 			AddLocalComponents(temp);
 		}
 
@@ -80,7 +82,9 @@ namespace Models
 		private void AddLocalComponents(ObservableCollection<Components.Component> components)
 		{
 			foreach (Components.Component component in components)
+			{
 				ComponentsList.Add((Components.Component)component.Clone());
+			}
 		}
 
 		public ObservableCollection<Components.Component> UpdateReport()
@@ -89,7 +93,11 @@ namespace Models
 			Report = new ObservableCollection<Components.Component>();
 			foreach (Components.Component component in ComponentsList)
 			{
-				if (!component.Soldering) continue;
+				if (!component.Soldering)
+				{
+					continue;
+				}
+
 				bool change = false;
 				int index = FindElement(component, ref change);
 				if (index != -1)
@@ -129,26 +137,26 @@ namespace Models
 				}
 				else // Частичное совпадение или полное не соответствие
 				{
-/*					if (item.Description == component.Description)
-					{
-//						StringBuilder builder = new StringBuilder();
-//						builder.Append("Не соответствие компонентов")
+					/*					if (item.Description == component.Description)
+										{
+					//						StringBuilder builder = new StringBuilder();
+					//						builder.Append("Не соответствие компонентов")
 
 
-						CustomControls.UserMessageBox messageBox = new CustomControls.UserMessageBox("Подготовка компонентов", "test", CustomControls.UserMessageBox.UserMessageButtons.Apply2Cancel);
-						messageBox.ShowDialog();
-						if (messageBox.DialogResult == CustomControls.UserMessageBox.UserMessageResult.Apply1)
-						{
-							index = Report.IndexOf(item);
-							break;
-						}
-						else if (messageBox.DialogResult == CustomControls.UserMessageBox.UserMessageResult.Apply2)
-						{
-							index = Report.IndexOf(item);
-							change = true;
-							break;
-						}
-					}*/
+											CustomControls.UserMessageBox messageBox = new CustomControls.UserMessageBox("Подготовка компонентов", "test", CustomControls.UserMessageBox.UserMessageButtons.Apply2Cancel);
+											messageBox.ShowDialog();
+											if (messageBox.DialogResult == CustomControls.UserMessageBox.UserMessageResult.Apply1)
+											{
+												index = Report.IndexOf(item);
+												break;
+											}
+											else if (messageBox.DialogResult == CustomControls.UserMessageBox.UserMessageResult.Apply2)
+											{
+												index = Report.IndexOf(item);
+												change = true;
+												break;
+											}
+										}*/
 				}
 			}
 			return index;
@@ -156,7 +164,7 @@ namespace Models
 
 		private Components.Component PrepareLocalComponent(Components.Component inComponent)
 		{
-			Components.Component outComponent = new Components.Component(String.Empty)
+			Components.Component outComponent = new Components.Component(string.Empty)
 			{
 				Description = inComponent.Description
 			};

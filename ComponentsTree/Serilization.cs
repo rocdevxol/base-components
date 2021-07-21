@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Web.Script.Serialization;
 using System.Windows;
 
 namespace ComponentsTree
@@ -29,7 +29,7 @@ namespace ComponentsTree
 		/// <param name="fileName">Имя файла</param>
 		/// <returns>Извлеченный объект</returns>
 		public static object BinaryDeserilizate(string fileName)
-		{ 
+		{
 			object obj = null;
 			try
 			{
@@ -39,9 +39,9 @@ namespace ComponentsTree
 					obj = (Models.Projects.Project)formatter.Deserialize(fs);
 				}
 			}
-			catch //(Exception ex)
+			catch (Exception)
 			{
-				MessageBox.Show("Файл содержит ошибку, проверьте правильность файла", "Открытие файла");
+				_ = MessageBox.Show("Файл содержит ошибку, проверьте правильность файла", "Открытие файла");
 			}
 			return obj;
 		}
@@ -54,8 +54,9 @@ namespace ComponentsTree
 		/// <param name="obj">Объект</param>
 		public static void JsonSerilizate(string fileName, object obj)
 		{
-			string json = new JavaScriptSerializer().Serialize(obj);
-			
+			//string json = new JavaScriptSerializer().Serialize(obj);
+			string json = JsonConvert.SerializeObject(obj);
+
 			using (FileStream fs = new FileStream(fileName, FileMode.OpenOrCreate))
 			{
 				StreamWriter streamWriter = new StreamWriter(fs);
@@ -65,7 +66,9 @@ namespace ComponentsTree
 			}
 			object res = CheckSaveJsonDeserilizate(fileName);
 			if (obj != null && res == null)
-				MessageBox.Show("Сохранение файла произошло с ошибкой, пересохраните повторно", "Сохранить");
+			{
+				_ = MessageBox.Show("Сохранение файла произошло с ошибкой, пересохраните повторно", "Сохранить");
+			}
 		}
 
 		/// <summary>
@@ -79,11 +82,12 @@ namespace ComponentsTree
 			try
 			{
 				string json = File.ReadAllText(fileName);
-				obj = new JavaScriptSerializer().Deserialize<Models.Projects.ProjectJson>(json);
+				//obj = new JavaScriptSerializer().Deserialize<Models.Projects.ProjectJson>(json);
+				obj = JsonConvert.DeserializeObject<Models.Projects.ProjectJson>(json);
 			}
-			catch (ArgumentException ex)
+			catch (ArgumentException)
 			{
-				MessageBox.Show("Файл содержит ошибку, проверьте правильность файла", "Открытие файла");
+				_ = MessageBox.Show("Файл содержит ошибку, проверьте правильность файла", "Открытие файла");
 			}
 			return obj;
 		}
@@ -95,11 +99,12 @@ namespace ComponentsTree
 			try
 			{
 				string json = File.ReadAllText(fileName);
-				obj = new JavaScriptSerializer().Deserialize<Models.Projects.ProjectJson>(json);
+				//obj = new JavaScriptSerializer().Deserialize<Models.Projects.ProjectJson>(json);
+				obj = JsonConvert.DeserializeObject<Models.Projects.ProjectJson>(json);
 			}
-			catch //(ArgumentException ex)
+			catch (ArgumentException)
 			{
-				//MessageBox.Show("Сохранение файла произошло с ошибкой, пересохраните повторно", "Сохранить");
+				_ = MessageBox.Show("Сохранение файла произошло с ошибкой, пересохраните повторно", "Сохранить");
 			}
 			return obj;
 		}

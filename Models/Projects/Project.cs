@@ -54,6 +54,10 @@ namespace Models.Projects
 		{
 			get
 			{
+				if (FullNameProject == string.Empty)
+				{
+					return string.Empty;
+				}
 				System.IO.FileInfo fif = new System.IO.FileInfo(FullNameProject);
 				return fif.Directory.FullName;
 			}

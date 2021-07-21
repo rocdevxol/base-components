@@ -134,7 +134,7 @@ namespace ComponentsTree
 				object obj = Serilization.JsonDeserilizate(Project.FullNameProject);
 				if (obj == null)
 				{
-					MessageBox.Show("Пересохраните файл, ошибка записи");
+					_ = MessageBox.Show("Пересохраните файл, ошибка записи");
 				}
 			}
 			else
@@ -194,7 +194,7 @@ namespace ComponentsTree
 				return;
 			}
 
-			Projects.Remove(Project);
+			_ = Projects.Remove(Project);
 			ProjectFolder = string.Empty;
 		}
 
@@ -557,12 +557,7 @@ namespace ComponentsTree
 				List<Component> comps = components.FindAll(i => i.FindElement(search));
 				componentsFinded.AddRange(comps);
 			}
-			if (componentsFinded.Count == 0)
-			{
-				return null;
-			}
-
-			return componentsFinded;
+			return componentsFinded.Count == 0 ? null : componentsFinded;
 		}
 
 		/// <summary>
@@ -576,12 +571,7 @@ namespace ComponentsTree
 		{
 			List<MechanicalComp> mechanicalFinded = new List<MechanicalComp>(); // перечень электронных компонентов по платам
 
-			if (mechanicalFinded.Count == 0)
-			{
-				return null;
-			}
-
-			return mechanicalFinded;
+			return mechanicalFinded.Count == 0 ? null : mechanicalFinded;
 		}
 
 		/// <summary>
@@ -593,14 +583,14 @@ namespace ComponentsTree
 		/// <returns>список найденных проводов</returns>
 		private List<Wire> FindWires(string search)
 		{
-			List<Wire> wireFinded = new List<Wire>(); // перечень электронных компонентов по платам
-
-			if (wireFinded.Count == 0)
+			if (search is null)
 			{
-				return null;
+				throw new ArgumentNullException(nameof(search));
 			}
 
-			return wireFinded;
+			List<Wire> wireFinded = new List<Wire>(); // перечень электронных компонентов по платам
+
+			return wireFinded.Count == 0 ? null : wireFinded;
 		}
 		#endregion
 

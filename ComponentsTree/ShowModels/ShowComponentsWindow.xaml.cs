@@ -148,7 +148,7 @@ namespace ComponentsTree.ShowModels
 				return;
 			}
 
-			int empty = ClearEmptyParts();
+			_ = ClearEmptyParts();
 			CheckComponents();
 			SortComponents();
 			CalculatePrice();

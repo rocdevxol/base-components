@@ -168,6 +168,7 @@ namespace Models.Boards
 
 			ComponentLists = new Components.ComponentList();
 			MechanicalLists = new Mechanical.MechanicalList();
+			Gerber = new Gerber.Gerber();
 		}
 
 		/// <summary>
