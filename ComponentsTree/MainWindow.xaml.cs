@@ -1,12 +1,14 @@
 ﻿using Microsoft.Win32;
 using Models.Boards;
 using Models.Components;
+using Models.Gerber;
 using Models.Mechanical;
 using Models.Projects;
 using Models.Wires;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -37,6 +39,16 @@ namespace ComponentsTree
 		private Board Board { get; set; }
 
 		/// <summary>
+		/// Текущий Gerber слой
+		/// </summary>
+		private GerberLayer GerberLayer { get; set; }
+
+		/// <summary>
+		/// Каталог gerber файлов
+		/// </summary>
+		private Gerber GerberFolder { get; set; }
+
+		/// <summary>
 		/// Перечень компонентов
 		/// </summary>
 		private ComponentList ComponentList { get; set; }
@@ -45,6 +57,8 @@ namespace ComponentsTree
 		/// Используется для коллекции полей ввода
 		/// </summary>
 		private ObservableCollection<string> ComboBoxCollection;
+
+		public static string ProjectFolder = string.Empty;
 		#endregion
 
 		public MainWindow()
@@ -91,6 +105,7 @@ namespace ComponentsTree
 			if (project != null)
 			{
 				Projects.Add(project);
+				ProjectFolder = project.ProjectFolder;
 			}
 		}
 
@@ -106,7 +121,7 @@ namespace ComponentsTree
 				return;
 			}
 
-			if (Project.ProjectFolder == string.Empty)
+			if (Project.FullNameProject == string.Empty)
 			{
 				SaveFileDialog sfd = new SaveFileDialog
 				{
@@ -115,27 +130,28 @@ namespace ComponentsTree
 				bool? result = sfd.ShowDialog();
 				if (result == true)
 				{
-					Project.ProjectFolder = sfd.FileName;
+					Project.FullNameProject = sfd.FileName;
+					ProjectFolder = Project.ProjectFolder;
 				}
 				else
 				{
 					return;
 				}
 			}
-			if (Project.ProjectFolder.Contains("json"))
+			if (Project.FullNameProject.Contains("json"))
 			{
 				ProjectJson projectJson = new ProjectJson(Project);
-				Serilization.JsonSerilizate(Project.ProjectFolder, projectJson);
+				Serilization.JsonSerilizate(Project.FullNameProject, projectJson);
 				// проверка на правильность сохранения файла
-				object obj = Serilization.JsonDeserilizate(Project.ProjectFolder);
+				object obj = Serilization.JsonDeserilizate(Project.FullNameProject);
 				if (obj == null)
 				{
-					MessageBox.Show("Пересохраните файл, ошибка записи");
+					_ = MessageBox.Show("Пересохраните файл, ошибка записи");
 				}
 			}
 			else
 			{
-				Serilization.BinarySerilizate(Project.ProjectFolder, Project);
+				Serilization.BinarySerilizate(Project.FullNameProject, Project);
 			}
 		}
 
@@ -159,21 +175,22 @@ namespace ComponentsTree
 			bool? result = sfd.ShowDialog();
 			if (result == true)
 			{
-				Project.ProjectFolder = sfd.FileName;
+				Project.FullNameProject = sfd.FileName;
+				ProjectFolder = Project.ProjectFolder;
 			}
 			else
 			{
 				return;
 			}
 
-			if (Project.ProjectFolder.Contains("json"))
+			if (Project.FullNameProject.Contains("json"))
 			{
 				ProjectJson projectJson = new ProjectJson(Project);
-				Serilization.JsonSerilizate(Project.ProjectFolder, projectJson);
+				Serilization.JsonSerilizate(Project.FullNameProject, projectJson);
 			}
 			else
 			{
-				Serilization.BinarySerilizate(Project.ProjectFolder, Project);
+				Serilization.BinarySerilizate(Project.FullNameProject, Project);
 			}
 		}
 
@@ -189,7 +206,8 @@ namespace ComponentsTree
 				return;
 			}
 
-			Projects.Remove(Project);
+			_ = Projects.Remove(Project);
+			ProjectFolder = string.Empty;
 		}
 
 
@@ -202,9 +220,10 @@ namespace ComponentsTree
 		{
 			if (Project == null)
 			{
-				MessageBox.Show(Title, "Выберете проект в дереве");
+				_ = MessageBox.Show(Title, "Выберете проект в дереве");
 				return;
 			}
+			ExportExcel.ExcelPrepare.Folder = ProjectFolder;
 			ExportExcel.ExportProject.ExportComponentList(Project);
 
 		}
@@ -279,7 +298,7 @@ namespace ComponentsTree
 		}
 
 		/// <summary>
-		/// Импорт перечня компонентов
+		/// Импорт перечня компонентов Allegro
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
@@ -312,6 +331,35 @@ namespace ComponentsTree
 			}
 		}
 
+		/// <summary>
+		/// Импорт перечня компонентов Altium
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void ImportComponentAltium_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (Board == null)
+			{
+				return;
+			}
+
+			WindowImportAltium wia = new WindowImportAltium();
+			bool? result = wia.ShowDialog();
+
+			if (result != true)
+				return;
+
+			ObservableCollection<Component> components = wia.components;
+			
+			Board.GetComponentList().Components.Clear();
+
+			foreach (Component component in components)
+			{
+				Board.GetComponentList().Add(component);
+			}
+		}
+
+
 		#endregion
 
 		#region ContextMenu Project
@@ -322,7 +370,11 @@ namespace ComponentsTree
 		/// <param name="e"></param>
 		private void RenameProject_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (Project == null) return;
+			if (Project == null)
+			{
+				return;
+			}
+
 			NameProjectWindow nameProjectWindow = new NameProjectWindow(Project.Name);
 			bool? result = nameProjectWindow.ShowDialog();
 			if (result == true)
@@ -340,7 +392,11 @@ namespace ComponentsTree
 		/// <param name="e"></param>
 		private void ParametersBoard_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (Board == null) return;
+			if (Board == null)
+			{
+				return;
+			}
+
 			BoardWindow boardWindow = new BoardWindow(Board);
 			bool? result = boardWindow.ShowDialog();
 			if (result == true)
@@ -368,6 +424,71 @@ namespace ComponentsTree
 		/// <param name="e"></param>
 		private void ShowMechanicalList_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
+		}
+		#endregion
+
+		#region ContextMenu Gerber
+		/// <summary>
+		/// Добавить/Заменить слой в гербере
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void AddChangeGerberLayer_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			OpenFileDialog ofd = new OpenFileDialog();
+
+			ofd.Filter = "Все файлы|*.*";
+			bool? result = ofd.ShowDialog();
+			if (result != true) return;
+
+			string content = File.ReadAllText(ofd.FileName);
+
+			GerberLayer.Content = content;
+		}
+
+		/// <summary>
+		/// Добавить новый слой в плату
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void NewGerberLayer_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			OpenFileDialog ofd = new OpenFileDialog();
+
+			ofd.Filter = "Все файлы|*.*";
+			bool? result = ofd.ShowDialog();
+			if (result != true) return;
+
+			string content = File.ReadAllText(ofd.FileName);
+			GerberFolder.AddLayer(content);
+		}
+
+		/// <summary>
+		/// Показать слой гербера
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void ShowGerberLayer_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+		}
+
+		/// <summary>
+		/// Показать все слои гербера
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void ShowAllGerberLayers_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+		}
+
+		/// <summary>
+		/// Экспорт гербер слоев
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void ExportGerberLayers_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+
 		}
 		#endregion
 
@@ -486,7 +607,7 @@ namespace ComponentsTree
 					return null;
 				}
 			}
-			project.ProjectFolder = open.FileName;
+			project.FullNameProject = open.FileName;
 			SortParts(project); // Сортировка частей проекта при открытии
 			return project;
 		}
@@ -542,12 +663,7 @@ namespace ComponentsTree
 				List<Component> comps = components.FindAll(i => i.FindElement(search));
 				componentsFinded.AddRange(comps);
 			}
-			if (componentsFinded.Count == 0)
-			{
-				return null;
-			}
-
-			return componentsFinded;
+			return componentsFinded.Count == 0 ? null : componentsFinded;
 		}
 
 		/// <summary>
@@ -561,12 +677,7 @@ namespace ComponentsTree
 		{
 			List<MechanicalComp> mechanicalFinded = new List<MechanicalComp>(); // перечень электронных компонентов по платам
 
-			if (mechanicalFinded.Count == 0)
-			{
-				return null;
-			}
-
-			return mechanicalFinded;
+			return mechanicalFinded.Count == 0 ? null : mechanicalFinded;
 		}
 
 		/// <summary>
@@ -578,14 +689,14 @@ namespace ComponentsTree
 		/// <returns>список найденных проводов</returns>
 		private List<Wire> FindWires(string search)
 		{
-			List<Wire> wireFinded = new List<Wire>(); // перечень электронных компонентов по платам
-
-			if (wireFinded.Count == 0)
+			if (search is null)
 			{
-				return null;
+				throw new ArgumentNullException(nameof(search));
 			}
 
-			return wireFinded;
+			List<Wire> wireFinded = new List<Wire>(); // перечень электронных компонентов по платам
+
+			return wireFinded.Count == 0 ? null : wireFinded;
 		}
 		#endregion
 
@@ -600,46 +711,61 @@ namespace ComponentsTree
 			Project = null;
 			Board = null;
 			ComponentList = null;
-			if (e.NewValue as Project != null)
+			GerberLayer = null;
+			GerberFolder = null;
+
+			if ((e.NewValue as Project) != null)
 			{
 				Project = e.NewValue as Project;
 				treeViewProject.ContextMenu = treeViewProject.Resources["contextProject"] as ContextMenu;
+				ProjectFolder = Project.ProjectFolder;
 			}
-			else if (e.NewValue as BoardList != null)
+			else if ((e.NewValue as BoardList) != null)
 			{
 
 			}
-			else if (e.NewValue as Board != null)
+			else if ((e.NewValue as Board) != null)
 			{
 				Board = e.NewValue as Board;
 				treeViewProject.ContextMenu = treeViewProject.Resources["contextBoard"] as ContextMenu;
 			}
-			else if (e.NewValue as ComponentList != null)
+			else if ((e.NewValue as ComponentList) != null)
 			{
 				ComponentList = e.NewValue as ComponentList;
 			}
-			else if (e.NewValue as Component != null)
+			else if ((e.NewValue as Component) != null)
 			{
 				treeViewProject.ContextMenu = treeViewProject.Resources["contextComponent"] as ContextMenu;
 			}
-			else if (e.NewValue as MechanicalList != null)
+			else if ((e.NewValue as MechanicalList) != null)
 			{
 
 			}
-			else if (e.NewValue as MechanicalComp != null)
+			else if ((e.NewValue as MechanicalComp) != null)
 			{
 
 			}
-			else if (e.NewValue as WireList != null)
+			else if ((e.NewValue as WireList) != null)
 			{
 
 			}
-			else if (e.NewValue as Wire != null)
+			else if ((e.NewValue as Wire) != null)
 			{
 
 			}
+			else if ((e.NewValue as Gerber) != null)
+			{
+				GerberFolder = e.NewValue as Gerber;
+				treeViewProject.ContextMenu = treeViewProject.Resources["contextMenuGerbers"] as ContextMenu;
+			}
+			else if ((e.NewValue as GerberLayer) != null)
+			{
+				GerberLayer = e.NewValue as GerberLayer;
+				treeViewProject.ContextMenu = treeViewProject.Resources["contextGerberLayer"] as ContextMenu;
+			}
+
 		}
-		
+
 		/// <summary>
 		/// 
 		/// </summary>

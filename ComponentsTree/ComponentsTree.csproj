@@ -38,8 +38,8 @@
     <ApplicationIcon>catalog_icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -75,6 +75,9 @@
     </Compile>
     <Compile Include="ShowModels\WindowFindedElements.xaml.cs">
       <DependentUpon>WindowFindedElements.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WindowImportAltium.xaml.cs">
+      <DependentUpon>WindowImportAltium.xaml</DependentUpon>
     </Compile>
     <Page Include="BoardWindow.xaml">
       <SubType>Designer</SubType>
@@ -117,6 +120,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ShowModels\WindowFindedElements.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WindowImportAltium.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -168,6 +175,10 @@
       <Project>{e4dbf25d-dc8e-47b3-830b-e9b10ebf44ba}</Project>
       <Name>SeparateAllegroSpb</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SeparateAltium\SeparateAltium.csproj">
+      <Project>{77be81d9-8137-46f9-9c14-38d1c4ed06bf}</Project>
+      <Name>SeparateAltium</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="catalog_icon.ico" />
@@ -200,6 +211,25 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Pcb.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\PcbLib.ico" />
+    <Resource Include="Images\PcbProject.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\BOM.ico" />
+    <Resource Include="Images\CAMtastic.ico" />
+    <Resource Include="Images\DesignItem.ico" />
+    <Resource Include="Images\MultiBoardAssembly.ico" />
+    <Resource Include="Images\PCBUnits.ico" />
+    <Resource Include="Images\Preferences_ProductionManager.ico" />
+    <Resource Include="Images\SchLib.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Suggested name pattern.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

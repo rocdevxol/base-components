@@ -12,7 +12,7 @@ namespace Models.Projects
 	public class Project : INotifyPropertyChanged, ICloneable
 	{
 		private string name;
-		private string projectFolder;
+		private string fullNameProject;
 		private ObservableCollection<ITreeProject> parts;
 
 		/// <summary>
@@ -31,23 +31,37 @@ namespace Models.Projects
 			}
 		}
 
+		/// <summary>
+		/// Полное название проекта
+		/// </summary>
+		public string FullNameProject
+		{
+			get => fullNameProject;
+			set
+			{
+				if (fullNameProject != value.Trim())
+				{
+					fullNameProject = value.Trim();
+					NotifyPropertyChanged();
+				}
+			}
+		}
 
 		/// <summary>
 		/// Директория проекта
 		/// </summary>
 		public string ProjectFolder
 		{
-			get => projectFolder;
-			set
+			get
 			{
-				if (projectFolder != value.Trim())
+				if (FullNameProject == string.Empty)
 				{
-					projectFolder = value.Trim();
-					NotifyPropertyChanged();
+					return string.Empty;
 				}
+				System.IO.FileInfo fif = new System.IO.FileInfo(FullNameProject);
+				return fif.Directory.FullName;
 			}
 		}
-
 
 		/// <summary>
 		/// Перечень составляющих
@@ -72,7 +86,7 @@ namespace Models.Projects
 		public Project(string name)
 		{
 			Name = name;
-			ProjectFolder = String.Empty;
+			FullNameProject = String.Empty;
 			Parts = new ObservableCollection<ITreeProject>
 			{
 				new Boards.BoardList(),
@@ -94,7 +108,7 @@ namespace Models.Projects
 		public Project(ProjectJson projectJson)
 		{
 			Name = projectJson.Name;
-			ProjectFolder = projectJson.ProjectFolder;
+			FullNameProject = projectJson.ProjectFolder;
 			Parts = new ObservableCollection<ITreeProject>
 			{
 				new Boards.BoardList((Boards.BoardJsonList)projectJson.GetBoardList().Clone()),

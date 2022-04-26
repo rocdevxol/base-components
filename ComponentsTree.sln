@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29806.167
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32314.265
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComponentsTree", "ComponentsTree\ComponentsTree.csproj", "{7C9F5D33-35C6-4A28-9487-7571194490A6}"
 EndProject
@@ -12,6 +12,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExportExcel", "ExportExcel\ExportExcel.csproj", "{2BA037D6-057F-4BD4-99D7-F7D950681145}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomControls", "CustomControls\CustomControls.csproj", "{968DDA7C-F9CF-4F59-A6BA-2356ECB795AA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeparateAltium", "SeparateAltium\SeparateAltium.csproj", "{77BE81D9-8137-46F9-9C14-38D1C4ED06BF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{968DDA7C-F9CF-4F59-A6BA-2356ECB795AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{968DDA7C-F9CF-4F59-A6BA-2356ECB795AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{968DDA7C-F9CF-4F59-A6BA-2356ECB795AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77BE81D9-8137-46F9-9C14-38D1C4ED06BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77BE81D9-8137-46F9-9C14-38D1C4ED06BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77BE81D9-8137-46F9-9C14-38D1C4ED06BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77BE81D9-8137-46F9-9C14-38D1C4ED06BF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

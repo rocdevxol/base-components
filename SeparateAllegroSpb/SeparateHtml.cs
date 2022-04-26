@@ -9,6 +9,15 @@ namespace SeparateAllegroSpb
 {
 	public class SeparateHtml
 	{
+		private enum SmdNamed
+		{ 
+			Unknown,
+			Resistor,
+			Capacitor,
+			Inductance
+		}
+
+
 		public ObservableCollection<Component> ImportHtmlComponents(string fileName)
 		{
 			ObservableCollection<Component> list = new ObservableCollection<Component>();
@@ -29,11 +38,31 @@ namespace SeparateAllegroSpb
 
 					Package package = new Package(items[4].InnerText);
 					string value = items[2].InnerText;
-					if (SmdType(items[4].InnerText))
+
+					SmdNamed named = SmdType(items[4].InnerText);
+					if (named != SmdNamed.Unknown)
 					{
-						package = new Package(GetPackage(items[4].InnerText));
-						value = GetValue(items[2].InnerText, items[4].InnerText);
+						switch (named)
+						{
+							case SmdNamed.Resistor:
+								package = new Package(GetPackage(items[4].InnerText));
+								value = GetValueResistor(items[2].InnerText, items[4].InnerText);
+								item.TypeComponent = "Тонкопленочные резисторы – для поверхностного монтажа";
+								break;
+							case SmdNamed.Capacitor:
+								package = new Package(GetPackage(items[4].InnerText));
+								value = GetValueCapacitor(items[2].InnerText, items[4].InnerText);
+								item.TypeComponent = "Многослойные керамические конденсаторы - поверхностного монтажа";
+								break;
+							case SmdNamed.Inductance:
+								package = new Package(GetPackage(items[4].InnerText));
+								value = GetValueInductance(items[2].InnerText, items[4].InnerText);
+								break;
+							default:
+								break;
+						}
 					}
+
 
 					item.Description = value;
 
@@ -48,7 +77,7 @@ namespace SeparateAllegroSpb
 					{
 						continue;
 					}
-					Position position = new Position(ConvertToDouble(items[5].InnerText), ConvertToDouble(items[6].InnerText), ConvertToDouble(items[7].InnerText), items[8].InnerText == "NO" ? false : true);
+					Position position = new Position(ConvertToDouble(items[5].InnerText), ConvertToDouble(items[6].InnerText), ConvertToDouble(items[7].InnerText), items[8].InnerText != "NO");
 					item.Position = position;
 
 					list.Add(item);
@@ -79,38 +108,59 @@ namespace SeparateAllegroSpb
 			}
 		}
 
-		private bool SmdType(string package)
+		private SmdNamed SmdType(string package)
 		{
 			try
 			{
 				string[] separate = package.Split(new char[] { '_', 'M' });
 				if (separate.Length > 2)
 				{
-					return false;
+					return SmdNamed.Unknown;
 				}
 
 				if (int.Parse(separate[1]) == 0)
 				{
-					return false;
+					return SmdNamed.Unknown;
 				}
 
-				if (separate[0] == "C" || separate[0] == "R" || separate[0] == "L")
-				{
-					return true;
-				}
+				if (separate[0] == "C")
+					return SmdNamed.Capacitor;
+				if (separate[0] == "R")
+					return SmdNamed.Resistor;
+				if (separate[0] == "L")
+					return SmdNamed.Inductance;
 			}
 			catch
 			{
-				return false;
+				return SmdNamed.Unknown;
 			}
-			return true;
+			return SmdNamed.Unknown;
 		}
 
-		private string GetValue(string oldvalue, string package)
+		private string GetValueCapacitor(string oldvalue, string package)
 		{
 			//string value = oldvalue;
 			string[] separate = package.Split(new char[] { '_', 'M' });
-			string value = string.Format("{0}{1}    {2}", separate[0], separate[1], oldvalue);
+			//string value = string.Format("{0}{1}    {2}", separate[0], separate[1], oldvalue);
+			string value = string.Format("{0}    {1}", separate[1], oldvalue);
+
+			return value;
+		}
+
+		private string GetValueResistor(string oldvalue, string package)
+		{
+			string[] separate = package.Split(new char[] { '_', 'M' });
+			//string value = string.Format("{0}{1}    {2}", separate[0], separate[1], oldvalue);
+			string value = string.Format("{0}    {1}Ω", separate[1], oldvalue);
+
+			return value;
+		}
+
+		private string GetValueInductance(string oldvalue, string package)
+		{
+			string[] separate = package.Split(new char[] { '_', 'M' });
+			//string value = string.Format("{0}{1}    {2}", separate[0], separate[1], oldvalue);
+			string value = string.Format("{0}    {1}", separate[1], oldvalue);
 
 			return value;
 		}

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ComponentsTree.ShowModels"
         mc:Ignorable="d"
-        Title="Просмотр перечня компонентов" Loaded="Window_Loaded" Height="450" Width="800">
+        Title="Просмотр перечня компонентов" Loaded="Window_Loaded" Height="450" Width="900">
 	<Window.Resources>
 		<Style x:Key="CenterCellStyle" TargetType="DataGridCell">
 			<Setter Property="Template">
@@ -63,17 +63,24 @@
 			<Separator/>
 			<Button Content="Экспорт JLC положения" ToolTip="Экспорт JLC положения" Command="local:CommandsShowModels.ExportJLCPosition"/>
 			<Button Content="Экспорт LCSC" ToolTip="Экспорт LCSC" Command="local:CommandsShowModels.ExportLCSC"/>
+			<CheckBox x:Name="checkBoxOnlySmdParts" Content="Только SMD компоненты"/>
 		</ToolBar>
 		<StatusBar DockPanel.Dock="Bottom">
 			<StatusBarItem>
 				<StackPanel Orientation="Horizontal">
 					<TextBlock Text="Общая стоимость:"/>
-					<TextBlock x:Name="textBlockTotalPrice" Text="" Margin="5,0,0,0"/>
+					<TextBlock x:Name="textBlockTotalPrice" Margin="5,0,0,0" MinWidth="75" TextAlignment="Center"/>
+					<Separator/>
+					<TextBlock Text="Кол-во SMD комп. (SMD выводов):" Margin="5,0,0,0"/>
+					<TextBlock x:Name="textBlockSmdComps" Margin="5,0,0,0" MinWidth="75" TextAlignment="Center"/>
+					<Separator/>
+					<TextBlock Text="Кол-во THT комп. (THT выводов):" Margin="5,0,0,0"/>
+					<TextBlock x:Name="textBlockThtComps" Margin="5,0,0,0" MinWidth="75" TextAlignment="Center"/>
 				</StackPanel>
 			</StatusBarItem>
 		</StatusBar>
 		<TabControl SelectionChanged="TabControl_SelectionChanged" >
-			<TabItem Header="Позиционное обозначение">
+			<TabItem Header="Описание">
 				<DataGrid x:Name="dataGridRefDes" AutoGenerateColumns="False" HorizontalGridLinesBrush="Gray" VerticalGridLinesBrush="Gray"
 				  CanUserResizeRows="False" SelectionMode="Single" ColumnHeaderHeight="30" RowHeight="24"
 				  CanUserReorderColumns="False" CanUserResizeColumns="True" CanUserSortColumns="False"
@@ -90,6 +97,7 @@
 						<DataGridTextColumn Header="Тип компонента" Binding="{Binding TypeComponent}" CellStyle="{StaticResource CenterCellStyle}"/>
 						<DataGridTextColumn Header="Описание" Binding="{Binding Description}" CellStyle="{StaticResource CenterCellStyle}"/>
 						<DataGridTextColumn Header="Количество" Binding="{Binding Count}" CellStyle="{StaticResource CenterCellStyle}"/>
+						<DataGridTextColumn Header="Код LCSC" Binding="{Binding Names[0].LCSC}" CellStyle="{StaticResource CenterCellStyle}"/>
 					<!--<DataGridTextColumn Header="Корпус 1" Binding="{Binding Names[0].Package.Name}" CellStyle="{StaticResource CenterCellStyle}"/>
 						<DataGridTextColumn Header="Значение 1" Binding="{Binding Names[0].Name}" CellStyle="{StaticResource CenterCellStyle}"/>
 						<DataGridTextColumn Header="Корпус 2" Binding="{Binding Names[1].Package.Name}" CellStyle="{StaticResource CenterCellStyle}"/>
@@ -119,6 +127,50 @@
 					</DataGrid.Columns>
 				</DataGrid>
 			</TabItem>
+			<TabItem Header="Положение">
+				<DockPanel>
+					<ToolBar DockPanel.Dock="Top">
+						<Label Content="dX="/>
+						<TextBox x:Name="textBoxDx" VerticalAlignment="Center" Height="18" Width="50"/>
+						<Label Content="dY="/>
+						<TextBox x:Name="textBoxDy" VerticalAlignment="Center" Height="18" Width="50"/>
+						<Button x:Name="buttonOffsetAll" Content="Переместить все компоненты" ToolTip="Переместить все компоненты на плате" Click="ButtonOffsetAll_Click"/>
+						<Button x:Name="buttonOffsetSelected" Content="Переместить выделенный" ToolTip="Переместить только выделенный" Click="ButtonOffsetSelected_Click"/>
+						<Separator/>
+						<Button x:Name="buttonRotateCounterClockwise" ToolTip="Повернуть против часовой стрелки на 90 градусов" Click="ButtonRotateCounterClockwise_Click">
+							<Image Width="24" Height="24" Source="{StaticResource RotateCounterclockwise}"/>
+						</Button>
+						<Button x:Name="buttonRotateClockwise" ToolTip="Повернуть по часовой стрелке на 90 градусов" Click="ButtonRotateClockwise_Click">
+							<Image Width="24" Height="24" Source="{StaticResource RotateClockwise}"/>
+						</Button>
+						<Separator/>
+						<Button x:Name="buttonImportPosition" ToolTip="Импорт положения всех компонентов" Click="ButtonImportPosition_Click">
+							<Image Width="24" Height="24" Source="{StaticResource Location1}"/>
+						</Button>
+					</ToolBar>
+					<DataGrid x:Name="dataGridPosition" AutoGenerateColumns="False" HorizontalGridLinesBrush="Gray" VerticalGridLinesBrush="Gray"
+					  CanUserResizeRows="False" SelectionMode="Single" ColumnHeaderHeight="30" RowHeight="24"
+					  CanUserReorderColumns="False" CanUserResizeColumns="True" CanUserSortColumns="False"
+					  AlternatingRowBackground="LightGray" IsReadOnly="False"
+					  SelectionChanged="DataGridRefDes_SelectionChanged" LoadingRow="DataGridRefDes_LoadingRow" BeginningEdit="DataGridRefDes_BeginningEdit" CellEditEnding="DataGridRefDes_CellEditEnding">
+						<DataGrid.RowHeaderStyle>
+							<Style TargetType="{x:Type DataGridRowHeader}">
+								<Setter Property="Width" Value="30" />
+							</Style>
+						</DataGrid.RowHeaderStyle>
+						<DataGrid.Columns>
+							<DataGridTextColumn Header="Поз. об." Binding="{Binding RefDes}" CellStyle="{StaticResource CenterCellStyle}"/>
+							<DataGridTextColumn Header="Описание" Binding="{Binding Description}" CellStyle="{StaticResource CenterCellStyle}"/>
+							<DataGridTextColumn Header="Координата X" Binding="{Binding Position.PositionX}" CellStyle="{StaticResource CenterCellStyle}"/>
+							<DataGridTextColumn Header="Координата Y" Binding="{Binding Position.PositionY}" CellStyle="{StaticResource CenterCellStyle}"/>
+							<DataGridTextColumn Header="Угол" Binding="{Binding Position.Angle}" CellStyle="{StaticResource CenterCellStyle}"/>
+							<DataGridTextColumn Header="Слой" Binding="{Binding Position.Mirror}" CellStyle="{StaticResource CenterCellStyle}"/>
+							<DataGridTextColumn Header="Код LCSC" Binding="{Binding Names[0].LCSC}" CellStyle="{StaticResource CenterCellStyle}"/>
+						</DataGrid.Columns>
+					</DataGrid>
+				</DockPanel>
+			</TabItem>
+
 		</TabControl>
     </DockPanel>
 </Window>
