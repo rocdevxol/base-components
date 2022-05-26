@@ -63,6 +63,7 @@ namespace SeparateAllegroSpb
 						}
 					}
 
+
 					item.Description = value;
 					item.EquivalentName = value;
 
