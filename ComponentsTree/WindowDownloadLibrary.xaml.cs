@@ -57,9 +57,18 @@ namespace ComponentsTree
 			LibraryLCSC.LCSCBaseData.DownloadLibrary();
 		}
 
+		private void buttonUpdate_Click(object sender, RoutedEventArgs e)
+		{
+			timer.Start();
+			LibraryLCSC.LCSCBaseData.IsCanceled = false;
+			LibraryLCSC.LCSCBaseData.UpdateLibrary();
+		}
+
+
 		private void buttonStop_Click(object sender, RoutedEventArgs e)
 		{
 			LibraryLCSC.LCSCBaseData.IsCanceled = true;
+			timer.Stop();
 		}
 
 		private void buttonOK_Click(object sender, RoutedEventArgs e)
@@ -72,7 +81,6 @@ namespace ComponentsTree
 		{
 
 		}
-
 
 	}
 }

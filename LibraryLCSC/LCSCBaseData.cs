@@ -24,6 +24,7 @@ namespace LibraryLCSC
 		private static Thread threadDownload;
 
 		public static bool IsCanceled;
+		public static bool IsUpdate;
 
 
 		#region Download Library
@@ -35,6 +36,20 @@ namespace LibraryLCSC
 			TotalReadCatalogs = 0;
 			TotalCountPages = 0;
 			TotalReadPages = 0;
+			IsUpdate = false;
+
+			threadDownload = new Thread(new ThreadStart(download_catalog));
+			threadDownload.Start();
+		}
+
+		public static void UpdateLibrary()
+		{
+			Catalogs = new List<LCSC.Catalog>();
+			TotalCountCatalogs = 0;
+			TotalReadCatalogs = 0;
+			TotalCountPages = 0;
+			TotalReadPages = 0;
+			IsUpdate = true;
 
 			threadDownload = new Thread(new ThreadStart(download_catalog));
 			threadDownload.Start();
@@ -71,6 +86,12 @@ namespace LibraryLCSC
 		{
 			if (catalog.ChildCatelogs == null || catalog.ChildCatelogs.Count == 0)
 			{
+				LCSC.Catalog c = null;
+				if (IsUpdate == true)
+					c = ReadCatalog(catalog.CatalogId);
+				if (c != null && c.CatalogId == catalog.CatalogId)
+					return;
+
 				catalog.Products = DownloadProductListFromCatalog(catalog.CatalogId);
 				
 				StoredCatalog(catalog);
@@ -94,12 +115,12 @@ namespace LibraryLCSC
 			List<LCSC.Product> products = new List<LCSC.Product>();
 			if (IsCanceled)
 				return null;
-			products.AddRange(LCSCDownload.DownloadPageProducts(1, 25, catalogId, ref totalPages));
+			products.AddRange(LCSCDownload.DownloadPageProducts(1, 500, catalogId, ref totalPages));
 			TotalCountPages = totalPages;
 			TotalReadPages = 1;
 			for (int pageNum = 2; pageNum < totalPages; pageNum++)
 			{
-				products.AddRange(LCSCDownload.DownloadPageProducts(pageNum, 25, catalogId, ref totalPages));
+				products.AddRange(LCSCDownload.DownloadPageProducts(pageNum, 500, catalogId, ref totalPages));
 				TotalReadPages = pageNum;
 				if (IsCanceled)
 					return products;
@@ -112,6 +133,31 @@ namespace LibraryLCSC
 		#endregion
 
 		#region Store Library
+		/// <summary>
+		/// Загрузка библиотеки из локального файла
+		/// </summary>
+		public static LCSC.Catalog ReadCatalog(int catalogId)
+		{
+			object obj = null;
+			try
+			{
+				BinaryFormatter formatter = new BinaryFormatter();
+				string fileName = string.Format($"{FolderStoring}Catalog_{catalogId}.lib");
+				using (FileStream fs = new FileStream(fileName, FileMode.Open))
+				{
+					obj = (LCSC.Catalog)formatter.Deserialize(fs);
+				}
+			}
+			catch (Exception)
+			{
+
+			}
+			if (obj == null)
+				return null;
+			return obj as LCSC.Catalog;
+		}
+
+
 		/// <summary>
 		/// Загрузка библиотеки из локального файла
 		/// </summary>
@@ -156,7 +202,7 @@ namespace LibraryLCSC
 			string fileName = string.Format($"{FolderStoring}Catalog_{catalog.CatalogId}.lib");
 			using (FileStream fs = new FileStream(fileName, FileMode.OpenOrCreate))
 			{
-				formatter.Serialize(fs, Catalogs);
+				formatter.Serialize(fs, catalog);
 			}
 		}
 
