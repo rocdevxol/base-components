@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ComponentsTree"
         mc:Ignorable="d"
-        Title="WindowDownloadLibrary" Height="200" Width="588" Loaded="Window_Loaded">
+        Title="WindowDownloadLibrary" Height="200" Width="600" Loaded="Window_Loaded">
 	<Grid Margin="30,0,30,0">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="*"/>
