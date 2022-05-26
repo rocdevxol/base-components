@@ -14,6 +14,12 @@ namespace Models.Components
 	[Serializable]
 	public class Position : INotifyPropertyChanged, ICloneable
 	{
+		public enum Layer
+		{
+			TopLayer,
+			BottomLayer
+		}
+
 		private double positionX;
 		private double positionY;
 		private double angle;
@@ -68,7 +74,8 @@ namespace Models.Components
 		}
 
 		/// <summary>
-		/// Угол поворота компонента на плате
+		/// Слой расположения компонента
+		/// false - Top Layer, true - Bottom Layer
 		/// </summary>
 		public bool Mirror
 		{
@@ -106,6 +113,11 @@ namespace Models.Components
 		}
 		#endregion
 
+		public override string ToString()
+		{
+			string layer = mirror == true ? "Bottom" : "Top";
+			return $"[{PositionX:F4}, {PositionY:F4}], {angle:F4}, {layer}";
+		}
 
 		public object Clone()
 		{

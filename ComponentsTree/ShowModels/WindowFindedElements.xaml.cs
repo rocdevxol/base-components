@@ -27,6 +27,7 @@ namespace ComponentsTree.ShowModels
 		private Models.Mechanical.MechanicalComp Mechanical;
 		private Models.Wires.Wire Wire;
 
+		private const int DefaultNumColumnsFind = 6;
 
 		/// <summary>
 		/// Количество столбцов суб компонентов
@@ -190,7 +191,7 @@ namespace ComponentsTree.ShowModels
 			int nowColumns = (sender as DataGrid).Columns.Count;
 			if ((sender as DataGrid).Name == dataGridComponents.Name)
 			{
-				nowColumns = (nowColumns - 5) / addColumns;
+				nowColumns = (nowColumns - DefaultNumColumnsFind) / addColumns;
 				for (; nowColumns < count; nowColumns++)
 				{
 					AddTextColumn(sender, string.Format("Корпус {0}", nowColumns + 1), string.Format("Names[{0}].Package.Name", nowColumns));

@@ -26,6 +26,7 @@
                             <DataGridTextColumn Header="Тип компонента" Binding="{Binding TypeComponent}"/>
                             <DataGridTextColumn Header="Описание" Binding="{Binding Description}"/>
                             <DataGridTextColumn Header="Количество" Binding="{Binding Count}"/>
+							<DataGridTextColumn Header="Код LCSC" Binding="{Binding Names[0].LCSC}"/>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Grid>

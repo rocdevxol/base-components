@@ -60,10 +60,14 @@ namespace ComponentsTree
 		/// </summary>
 		public static RoutedCommand ImportComponentAllegro = new RoutedCommand();
 
+		/// <summary>
+		/// Импорт перечня компонентов Altium
+		/// </summary>
+		public static RoutedCommand ImportComponentAltium = new RoutedCommand();
 		#endregion
 
 		#region Контекстное меню 
-		
+
 		#region Проект
 		/// <summary>
 		/// Переименовать проект
@@ -86,8 +90,35 @@ namespace ComponentsTree
 		/// Просмотр перечня механических компонентов
 		/// </summary>
 		public static RoutedCommand ShowMechanicalList = new RoutedCommand();
+
+		/// <summary>
+		/// Добавить/Заменить гербер слой
+		/// </summary>
+		public static RoutedCommand AddChangeGerberLayer = new RoutedCommand();
+
+		/// <summary>
+		/// Добавить новый гербер слой
+		/// </summary>
+		public static RoutedCommand NewGerberLayer = new RoutedCommand();
+
+		/// <summary>
+		/// Просмотр слоя
+		/// </summary>
+		public static RoutedCommand ShowGerberLayer = new RoutedCommand();
+
+		/// <summary>
+		/// Просмотр всех слоев
+		/// </summary>
+		public static RoutedCommand ShowAllGerberLayers = new RoutedCommand();
+
+		/// <summary>
+		/// Экспорт гербер слоев
+		/// </summary>
+		public static RoutedCommand ExportGerberLayers = new RoutedCommand();
+
+
 		#endregion
-		
+
 		#endregion
 
 		/// <summary>
@@ -100,6 +131,18 @@ namespace ComponentsTree
 		/// Для сравнения, для удаления пустых позиций
 		/// </summary>
 		public static RoutedCommand RefreshParts = new RoutedCommand();
+
+		#region LCSC
+		/// <summary>
+		/// Загрузка библиотеки компонентов LCSC
+		/// </summary>
+		public static RoutedCommand DownloadLibraryLCSC = new RoutedCommand();
+
+		/// <summary>
+		/// Обновление информации по компоненту из библиотеки
+		/// </summary>
+		public static RoutedCommand UpdateComponentLCSCLibrary = new RoutedCommand();
+		#endregion
 
 
 		public override object ProvideValue(IServiceProvider serviceProvider)
