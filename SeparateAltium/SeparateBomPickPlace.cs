@@ -130,7 +130,6 @@ namespace SeparateAltium
 					component.Soldering = true;
 					component.Count = 1;
 					component.Description = comment;
-					component.EquivalentName = comment;
 					if (partNumber == string.Empty)
 						partNumber = comment;
 					component.Names.Add(new SubComponent(partNumber));

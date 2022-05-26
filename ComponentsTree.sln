@@ -15,8 +15,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomControls", "CustomCon
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeparateAltium", "SeparateAltium\SeparateAltium.csproj", "{77BE81D9-8137-46F9-9C14-38D1C4ED06BF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryLCSC", "LibraryLCSC\LibraryLCSC.csproj", "{0906B653-B936-455D-9B85-0E39CE161C1E}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,10 +45,6 @@ Global
 		{77BE81D9-8137-46F9-9C14-38D1C4ED06BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77BE81D9-8137-46F9-9C14-38D1C4ED06BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77BE81D9-8137-46F9-9C14-38D1C4ED06BF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0906B653-B936-455D-9B85-0E39CE161C1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0906B653-B936-455D-9B85-0E39CE161C1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0906B653-B936-455D-9B85-0E39CE161C1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0906B653-B936-455D-9B85-0E39CE161C1E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

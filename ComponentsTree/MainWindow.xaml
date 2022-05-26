@@ -13,7 +13,7 @@
         mc:Ignorable="d"
         Title="Каталог компонентов" Height="500" Width="320" Loaded="Window_Loaded" Icon="catalog_icon.ico">
 	<Window.CommandBindings>
-		<CommandBinding Command="local:CustomCommands.CreateProject"	 Executed="CreateProject_Executed"/>
+		<CommandBinding Command="local:CustomCommands.CreateProject" Executed="CreateProject_Executed"/>
 		<CommandBinding Command="local:CustomCommands.OpenProject" Executed="OpenProject_Executed"/>
 		<CommandBinding Command="local:CustomCommands.SaveProject" Executed="SaveProject_Executed"/>
 		<CommandBinding Command="local:CustomCommands.SaveProjectAs" Executed="SaveProjectAs_Executed"/>
@@ -37,9 +37,6 @@
 		<CommandBinding Command="local:CustomCommands.ParametersBoard" Executed="ParametersBoard_Executed"/>
 		<CommandBinding Command="local:CustomCommands.ShowComponentsList" Executed="ShowComponentsList_Executed"/>
 		<CommandBinding Command="local:CustomCommands.ShowMechanicalList" Executed="ShowMechanicalList_Executed"/>
-
-		<CommandBinding Command="local:CustomCommands.DownloadLibraryLCSC" Executed="DownloadLibraryLCSC_Executed"/>
-		<CommandBinding Command="local:CustomCommands.UpdateComponentLCSCLibrary" Executed="UpdateComponentLCSCLibrary_Executed"/>
 
 		<CommandBinding x:Name="commandSearchParts" Command="local:CustomCommands.SearchParts" Executed="SearchParts_Executed"/>
 	</Window.CommandBindings>
@@ -116,17 +113,14 @@
 		</Menu>
 		<ToolBar DockPanel.Dock="Top">
 			<Button ToolTip="Новый проект" Command="local:CustomCommands.CreateProject">
-				<Image Width="24" Height="24" Source="{StaticResource NewFile}"/>
+				<Image Width="16" Height="16" Source="{StaticResource NewFile}"/>
 			</Button>
 			<Button ToolTip="Открыть проект" Command="local:CustomCommands.OpenProject">
-				<Image Width="24" Height="24" Source="{StaticResource OpenFile}"/>
+				<Image Width="16" Height="16" Source="{StaticResource OpenFile}"/>
 			</Button>
 			<Separator/>
 			<Button ToolTip="Сохранить проект" Command="local:CustomCommands.SaveProject">
-				<Image Width="24" Height="24" Source="{StaticResource SaveFile}"/>
-			</Button>
-			<Button ToolTip="Загрузить библиотеку" Command="local:CustomCommands.DownloadLibraryLCSC">
-				<Image Width="32" Height="24" Source="{StaticResource LCSCColor}"/>
+				<Image Width="16" Height="16" Source="{StaticResource SaveFile}"/>
 			</Button>
 
 		</ToolBar>
@@ -136,9 +130,6 @@
 					<TextBlock Text="Общая стоимость:"/>
 					<TextBlock x:Name="textBlockTotalPrice" Text="0,00" Margin="5,0,0,0"/>
 				</StackPanel>
-			</StatusBarItem>
-			<StatusBarItem>
-				<ProgressBar x:Name="progressBarLoadLcsc" MinWidth="150" Height="16"/>
 			</StatusBarItem>
 		</StatusBar>
 		<Grid x:Name="LayoutRoot">

@@ -76,9 +76,6 @@
     <Compile Include="ShowModels\WindowFindedElements.xaml.cs">
       <DependentUpon>WindowFindedElements.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WindowDownloadLibrary.xaml.cs">
-      <DependentUpon>WindowDownloadLibrary.xaml</DependentUpon>
-    </Compile>
     <Compile Include="WindowImportAltium.xaml.cs">
       <DependentUpon>WindowImportAltium.xaml</DependentUpon>
     </Compile>
@@ -126,10 +123,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WindowDownloadLibrary.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="WindowImportAltium.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -173,10 +166,6 @@
     <ProjectReference Include="..\ExportExcel\ExportExcel.csproj">
       <Project>{2ba037d6-057f-4bd4-99d7-f7d950681145}</Project>
       <Name>ExportExcel</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\LibraryLCSC\LibraryLCSC.csproj">
-      <Project>{0906b653-b936-455d-9b85-0e39ce161c1e}</Project>
-      <Name>LibraryLCSC</Name>
     </ProjectReference>
     <ProjectReference Include="..\Models\Models.csproj">
       <Project>{47b3fb13-c175-45b7-af45-49f871c2688c}</Project>

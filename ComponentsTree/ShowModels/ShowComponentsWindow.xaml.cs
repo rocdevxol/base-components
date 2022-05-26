@@ -6,7 +6,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using LibraryLCSC;
 
 namespace ComponentsTree.ShowModels
 {
@@ -18,8 +17,8 @@ namespace ComponentsTree.ShowModels
 		private string ProjectFolder = string.Empty;
 		private string NameBoard = string.Empty;
 
-		private const int DefaultNumColumnsDescription = 7;
-		private const int DefaultNumColumnsList = 4;
+		private const int DefaultNumColumnsDescription = 6;
+		private const int DefaultNumColumnsList = 3;
 
 		public ObservableCollection<Models.Components.Component> ComponentsCollection { get; set; }
 
@@ -236,30 +235,6 @@ namespace ComponentsTree.ShowModels
 			ExportExcel.ExcelPrepare.Folder = ProjectFolder;
 			ExportExcel.ExcelExportLCSC.ExportDataToExcel(ExportExcel.ExcelExportLCSC.CreateDataToExport(result), $"{NameBoard}_BOM");
 		}
-		
-		private void UpdateComponentLCSCLibrary_Executed(object sender, ExecutedRoutedEventArgs e)
-		{
-			foreach (Models.Components.Component component in ComponentsCollection)
-			{
-				string lcsc = component.Names.First().LCSC;
-				if (string.IsNullOrEmpty(lcsc))
-					continue;
-				LibraryLCSC.LCSC.Product product = LCSCDownload.DownloadProduct(lcsc);
-				if (product == null)
-				{
-					MessageBox.Show(Title, $"Проверьте компонент {component.RefDes}, код {lcsc} не найден в базе данных", MessageBoxButton.OK, MessageBoxImage.Warning);
-				}
-				component.TypeComponent = product.CatalogName;
-				component.Names[0].Name = product.ProductModel;
-				component.Names[0].Developer.Name = product.BrandNameEn;
-				component.Names[0].Distributor.Name = "LCSC";
-				component.Description = product.ProductIntroEn;
-				if (product.ProductPriceList.Count > 0)
-					component.Price = (double)product.ProductPriceList[0].UsdPrice;
-				component.Names[0].Package.Name = product.EncapStandard;
-			}
-		}
-
 		#endregion
 
 		#region DataGrid Methods
@@ -499,12 +474,8 @@ namespace ComponentsTree.ShowModels
 						}
 					}
 				}
-				if (string.IsNullOrEmpty(first.EquivalentName))
-					first.EquivalentName = first.Description;
 			}
 		}
-
-
 
 		/// <summary>
 		/// Удаление пустых SubComponent в перечне

@@ -42,7 +42,6 @@
 		<CommandBinding Command="local:CommandsShowModels.ExportBOMComponents" Executed="ExportBOMComponents_Executed"/>
 		<CommandBinding Command="local:CommandsShowModels.ExportJLCPosition" Executed="ExportJLCPosition_Executed"/>
 		<CommandBinding Command="local:CommandsShowModels.ExportLCSC" Executed="ExportLCSC_Executed"/>
-		<CommandBinding Command="local:CommandsShowModels.UpdateComponentLCSCLibrary" Executed="UpdateComponentLCSCLibrary_Executed"/>
 	</Window.CommandBindings>
 	<DockPanel>
 		<ToolBar DockPanel.Dock="Top">
@@ -57,9 +56,6 @@
             </Button>
             <Button ToolTip="Проверить список" Command="local:CommandsShowModels.CheckComponents">
 				<Image Width="24" Height="24" Source="{StaticResource Refresh}"/>
-			</Button>
-			<Button ToolTip="Обновить из базы данных" Command="local:CommandsShowModels.UpdateComponentLCSCLibrary">
-				<Image Width="32" Height="24" Source="{StaticResource LCSCColor}"/>
 			</Button>
 			<Separator/>
 			<Button Content="Экспорт RefDes" ToolTip="Экспорт RefDes" Command="local:CommandsShowModels.ExportRefDesComponents"/>
@@ -100,7 +96,6 @@
 						<DataGridTextColumn Header="Поз. об." Binding="{Binding RefDes}" CellStyle="{StaticResource CenterCellStyle}"/>
 						<DataGridTextColumn Header="Тип компонента" Binding="{Binding TypeComponent}" CellStyle="{StaticResource CenterCellStyle}"/>
 						<DataGridTextColumn Header="Описание" Binding="{Binding Description}" CellStyle="{StaticResource CenterCellStyle}"/>
-						<DataGridTextColumn Header="Краткое название" Binding="{Binding EquivalentName}" CellStyle="{StaticResource CenterCellStyle}"/>
 						<DataGridTextColumn Header="Количество" Binding="{Binding Count}" CellStyle="{StaticResource CenterCellStyle}"/>
 						<DataGridTextColumn Header="Код LCSC" Binding="{Binding Names[0].LCSC}" CellStyle="{StaticResource CenterCellStyle}"/>
 					<!--<DataGridTextColumn Header="Корпус 1" Binding="{Binding Names[0].Package.Name}" CellStyle="{StaticResource CenterCellStyle}"/>
@@ -124,7 +119,6 @@
 					<DataGrid.Columns>
 						<DataGridTextColumn Header="Тип компонента" Binding="{Binding TypeComponent}" CellStyle="{StaticResource CenterCellStyle}"/>
 						<DataGridTextColumn Header="Описание" Binding="{Binding Description}" CellStyle="{StaticResource CenterCellStyle}"/>
-						<DataGridTextColumn Header="Краткое название" Binding="{Binding EquivalentName}" CellStyle="{StaticResource CenterCellStyle}"/>
 						<DataGridTextColumn Header="Количество" Binding="{Binding Count}" CellStyle="{StaticResource CenterCellStyle}"/>
 						<!--
 						<DataGridTextColumn Header="Корпус" Binding="{Binding Names[0].Package.Name}" CellStyle="{StaticResource CenterCellStyle}"/>
@@ -167,7 +161,6 @@
 						<DataGrid.Columns>
 							<DataGridTextColumn Header="Поз. об." Binding="{Binding RefDes}" CellStyle="{StaticResource CenterCellStyle}"/>
 							<DataGridTextColumn Header="Описание" Binding="{Binding Description}" CellStyle="{StaticResource CenterCellStyle}"/>
-							<DataGridTextColumn Header="Краткое название" Binding="{Binding EquivalentName}" CellStyle="{StaticResource CenterCellStyle}"/>
 							<DataGridTextColumn Header="Координата X" Binding="{Binding Position.PositionX}" CellStyle="{StaticResource CenterCellStyle}"/>
 							<DataGridTextColumn Header="Координата Y" Binding="{Binding Position.PositionY}" CellStyle="{StaticResource CenterCellStyle}"/>
 							<DataGridTextColumn Header="Угол" Binding="{Binding Position.Angle}" CellStyle="{StaticResource CenterCellStyle}"/>

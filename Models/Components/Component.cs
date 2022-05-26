@@ -17,7 +17,6 @@ namespace Models.Components
 		private bool soldering;
 		private string typeComponent;
 		private string description;
-		private string equivalentName;
 		private int count;
 		private double price;
 		private ObservableCollection<SubComponent> names;
@@ -98,28 +97,6 @@ namespace Models.Components
 		}
 
 		/// <summary>
-		/// Эквивалентное название компонента, для удобства чтения
-		/// </summary>
-		public string EquivalentName
-		{
-			get => equivalentName;
-			set
-			{
-				if (value == null)
-				{
-					value = string.Empty;
-				}
-
-				if (equivalentName != value.Trim())
-				{
-					equivalentName = value.Trim();
-					NotifyPropertyChanged();
-				}
-			}
-		}
-
-
-		/// <summary>
 		/// Количество компонентов в плате
 		/// </summary>
 		public int Count
@@ -188,8 +165,6 @@ namespace Models.Components
 		{
 			RefDes = refDes;
 			Soldering = true;
-			Description = "";
-			EquivalentName = "";
 			Count = 1;
 			Price = 0;
 			Position = new Position();
@@ -234,7 +209,6 @@ namespace Models.Components
 			StringBuilder format = new StringBuilder();
 			format.Append($"{RefDes} : ");
 			format.Append($"Описание=\"{Description}\"\n");
-			format.Append($"Наименоваение=\"{EquivalentName}\"\n");
 			for (int i = 0; i < Names.Count; i++)
 			{
 				format.Append(string.Format(" {0}::{1}\n", i, Names[i]));
@@ -252,11 +226,6 @@ namespace Models.Components
 			if (Description != null && obj.Description != null)
 			{
 				result = Description.CompareTo(obj.Description);
-			}
-
-			if (EquivalentName != null && obj.EquivalentName != null)
-			{
-				result = EquivalentName.CompareTo(obj.EquivalentName);
 			}
 
 			if (result != 0)
@@ -286,7 +255,6 @@ namespace Models.Components
 				Soldering = Soldering,
 				TypeComponent = TypeComponent,
 				Description = Description,
-				EquivalentName = Description,
 				Count = Count,
 				Price = Price,
 				Position = (Position)Position?.Clone()
