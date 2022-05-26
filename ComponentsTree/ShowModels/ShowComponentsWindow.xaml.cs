@@ -1,10 +1,12 @@
-﻿using System.Collections.ObjectModel;
+﻿using Microsoft.Win32;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using LibraryLCSC;
 
 namespace ComponentsTree.ShowModels
 {
@@ -13,6 +15,12 @@ namespace ComponentsTree.ShowModels
 	/// </summary>
 	public partial class ShowComponentsWindow : Window
 	{
+		private string ProjectFolder = string.Empty;
+		private string NameBoard = string.Empty;
+
+		private const int DefaultNumColumnsDescription = 7;
+		private const int DefaultNumColumnsList = 4;
+
 		public ObservableCollection<Models.Components.Component> ComponentsCollection { get; set; }
 
 		public ObservableCollection<Models.Components.Component> ComponentsReport { get; set; }
@@ -29,17 +37,21 @@ namespace ComponentsTree.ShowModels
 			InitializeComponent();
 			ComponentsCollection = componentList.Components;
 			CountColumnsSubComponent = GetSubComponents(componentList.Components) + 1;
+			NameBoard = nameBoard;
 			if (nameBoard != string.Empty)
 			{
 				Title = string.Format("{0} - {1}", Title, nameBoard);
 			}
 		}
-			
+
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
 			try
 			{
+				ProjectFolder = MainWindow.ProjectFolder;
+
 				dataGridRefDes.ItemsSource = ComponentsCollection;
+				dataGridPosition.ItemsSource = ComponentsCollection;
 				//dataGridRefDes.ItemsSource = new ObservableCollection<Models.Components.Component>(ComponentsCollection);
 
 				GenerateDataGridColumns(dataGridRefDes, CountColumnsSubComponent);
@@ -52,7 +64,7 @@ namespace ComponentsTree.ShowModels
 			}
 			catch// (Exception ex)
 			{
-				MessageBox.Show("Сохраните, если вносились изменения. И переоткройте проект");
+				_ = MessageBox.Show("Сохраните, если вносились изменения. И переоткройте проект");
 				Close();
 			}
 		}
@@ -92,7 +104,7 @@ namespace ComponentsTree.ShowModels
 				return;
 			}
 
-			ComponentsCollection.Remove(Component);
+			_ = ComponentsCollection.Remove(Component);
 		}
 
 		/// <summary>
@@ -130,10 +142,17 @@ namespace ComponentsTree.ShowModels
 		/// <param name="e"></param>
 		private void CheckComponents_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (ComponentsCollection == null) return;
-			if (ComponentsCollection.Count == 0) return;
+			if (ComponentsCollection == null)
+			{
+				return;
+			}
 
-			int empty = ClearEmptyParts();
+			if (ComponentsCollection.Count == 0)
+			{
+				return;
+			}
+
+			_ = ClearEmptyParts();
 			CheckComponents();
 			SortComponents();
 			CalculatePrice();
@@ -146,6 +165,7 @@ namespace ComponentsTree.ShowModels
 		/// <param name="e"></param>
 		private void ExportRefDesComponents_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
+			ExportExcel.ExcelPrepare.Folder = ProjectFolder;
 			ExportExcel.ExcelRefDesBoard.ExportDataToExcel(ExportExcel.ExcelRefDesBoard.CreateDataToExport(ComponentsCollection));
 		}
 
@@ -158,6 +178,7 @@ namespace ComponentsTree.ShowModels
 		{
 			Models.ReportComponents report = new Models.ReportComponents(ComponentsCollection);
 			ObservableCollection<Models.Components.Component> result = report.UpdateReport();
+			ExportExcel.ExcelPrepare.Folder = ProjectFolder;
 			ExportExcel.ExcelExportBOM.ExportDataToExcel(ExportExcel.ExcelExportBOM.CreateDataToExport(result));
 		}
 
@@ -168,9 +189,23 @@ namespace ComponentsTree.ShowModels
 		/// <param name="e"></param>
 		private void ExportJLCPosition_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			Models.ReportComponents report = new Models.ReportComponents(ComponentsCollection);
-			ObservableCollection<Models.Components.Component> result = report.UpdateReport();
-			ExportExcel.ExcelExportBOM.ExportDataToExcel(ExportExcel.ExcelExportBOM.CreateDataToExport(result));
+			ObservableCollection<Models.Components.Component> components = new ObservableCollection<Models.Components.Component>();
+			foreach (Models.Components.Component component in ComponentsCollection)
+			{
+				if (checkBoxOnlySmdParts.IsChecked == true)
+				{
+					if (component.Names[0].Package.PackageType == Models.Components.PackageType.SMD_SMT)
+					{
+						components.Add(component);
+					}
+				}
+				else
+				{
+					components.Add(component);
+				}
+			}
+			ExportExcel.ExcelPrepare.Folder = ProjectFolder;
+			ExportExcel.ExcelExportPosition.ExportDataToExcel(ExportExcel.ExcelExportPosition.CreateDataToExport(components), $"{NameBoard}_CPL");
 		}
 
 		/// <summary>
@@ -180,10 +215,51 @@ namespace ComponentsTree.ShowModels
 		/// <param name="e"></param>
 		private void ExportLCSC_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			Models.ReportComponents report = new Models.ReportComponents(ComponentsCollection);
+			ObservableCollection<Models.Components.Component> components = new ObservableCollection<Models.Components.Component>();
+			foreach (Models.Components.Component component in ComponentsCollection)
+			{
+				if (checkBoxOnlySmdParts.IsChecked == true)
+				{
+					if (component.Names[0].Package.PackageType == Models.Components.PackageType.SMD_SMT)
+					{
+						components.Add(component);
+					}
+				}
+				else
+				{
+					components.Add(component);
+				}
+			}
+
+			Models.ReportComponents report = new Models.ReportComponents(components);
 			ObservableCollection<Models.Components.Component> result = report.UpdateReport();
-			ExportExcel.ExcelExportBOM.ExportDataToExcel(ExportExcel.ExcelExportBOM.CreateDataToExport(result));
+			ExportExcel.ExcelPrepare.Folder = ProjectFolder;
+			ExportExcel.ExcelExportLCSC.ExportDataToExcel(ExportExcel.ExcelExportLCSC.CreateDataToExport(result), $"{NameBoard}_BOM");
 		}
+		
+		private void UpdateComponentLCSCLibrary_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			foreach (Models.Components.Component component in ComponentsCollection)
+			{
+				string lcsc = component.Names.First().LCSC;
+				if (string.IsNullOrEmpty(lcsc))
+					continue;
+				LibraryLCSC.LCSC.Product product = LCSCDownload.DownloadProduct(lcsc);
+				if (product == null)
+				{
+					MessageBox.Show(Title, $"Проверьте компонент {component.RefDes}, код {lcsc} не найден в базе данных", MessageBoxButton.OK, MessageBoxImage.Warning);
+				}
+				component.TypeComponent = product.CatalogName;
+				component.Names[0].Name = product.ProductModel;
+				component.Names[0].Developer.Name = product.BrandNameEn;
+				component.Names[0].Distributor.Name = "LCSC";
+				component.Description = product.ProductIntroEn;
+				if (product.ProductPriceList.Count > 0)
+					component.Price = (double)product.ProductPriceList[0].UsdPrice;
+				component.Names[0].Package.Name = product.EncapStandard;
+			}
+		}
+
 		#endregion
 
 		#region DataGrid Methods
@@ -216,9 +292,13 @@ namespace ComponentsTree.ShowModels
 		{
 			//e.Row.Header = (e.Row.GetIndex() + 1).ToString();
 			if (e.Row.GetIndex() < ComponentsCollection.Count)
+			{
 				e.Row.Header = (e.Row.GetIndex() + 1).ToString();
+			}
 			else
+			{
 				e.Row.Header = "*";
+			}
 		}
 
 		private void DataGridRefDes_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
@@ -298,7 +378,11 @@ namespace ComponentsTree.ShowModels
 			copy.RefDes = change.RefDes;
 
 			int index = ComponentsCollection.IndexOf(change);
-			if (index == -1) return;
+			if (index == -1)
+			{
+				return;
+			}
+
 			ComponentsCollection.RemoveAt(index);
 			ComponentsCollection.Insert(index, copy);
 		}
@@ -332,7 +416,7 @@ namespace ComponentsTree.ShowModels
 			int nowColumns = (sender as DataGrid).Columns.Count;
 			if ((sender as DataGrid).Name == dataGridRefDes.Name)
 			{
-				nowColumns = (nowColumns - 5) / addColumns;
+				nowColumns = (nowColumns - DefaultNumColumnsDescription) / addColumns;
 				for (; nowColumns < count; nowColumns++)
 				{
 					AddTextColumn(sender, string.Format("Корпус {0}", nowColumns + 1), string.Format("Names[{0}].Package.Name", nowColumns));
@@ -342,7 +426,7 @@ namespace ComponentsTree.ShowModels
 			}
 			else if ((sender as DataGrid).Name == dataGridTotal.Name)
 			{
-				nowColumns = (nowColumns - 3) / addColumns;
+				nowColumns = (nowColumns - DefaultNumColumnsList) / addColumns;
 				for (; nowColumns < count; nowColumns++)
 				{
 					AddTextColumn(sender, string.Format("Корпус {0}", nowColumns + 1), string.Format("Names[{0}].Package.Name", nowColumns));
@@ -415,8 +499,12 @@ namespace ComponentsTree.ShowModels
 						}
 					}
 				}
+				if (string.IsNullOrEmpty(first.EquivalentName))
+					first.EquivalentName = first.Description;
 			}
 		}
+
+
 
 		/// <summary>
 		/// Удаление пустых SubComponent в перечне
@@ -447,14 +535,124 @@ namespace ComponentsTree.ShowModels
 		private void CalculatePrice()
 		{
 			double price = 0;
+			int smdComps = 0, thtComps = 0;
+			int smdPins = 0, thtPins = 0;
 			foreach (Models.Components.Component component in ComponentsCollection)
 			{
-				if (component == null) continue;
-				if (component.Names.Count == 0) continue;
+				if (component == null)
+				{
+					continue;
+				}
+
+				if (component.Names.Count == 0)
+				{
+					continue;
+				}
+
 				price += component.Names[0].Price * component.Count;
+				if (component.Names[0].Package.PackageType == Models.Components.PackageType.SMD_SMT)
+				{
+					smdComps++;
+					smdPins += component.Names[0].Package.NumPins;
+				}
+				else if (component.Names[0].Package.PackageType == Models.Components.PackageType.THT)
+				{
+					thtComps++;
+					thtPins += component.Names[0].Package.NumPins;
+				}
 			}
 			textBlockTotalPrice.Text = price.ToString("F2");
+			textBlockThtComps.Text = string.Format($"{thtComps} ({thtPins})");
+			textBlockSmdComps.Text = string.Format($"{smdComps} ({smdPins})");
 		}
 		#endregion
+
+		private void ButtonOffsetAll_Click(object sender, RoutedEventArgs e)
+		{
+			double dx = double.Parse(textBoxDx.Text);
+			double dy = double.Parse(textBoxDy.Text);
+
+			foreach (Models.Components.Component component in ComponentsCollection)
+			{
+				if (component == null)
+				{
+					continue;
+				}
+
+				component.Position.PositionX += dx;
+				component.Position.PositionY += dy;
+			}
+		}
+
+		private void ButtonOffsetSelected_Click(object sender, RoutedEventArgs e)
+		{
+
+		}
+
+		private void ButtonRotateClockwise_Click(object sender, RoutedEventArgs e)
+		{
+			if (dataGridPosition.CurrentItem == null)
+			{
+				return;
+			}
+
+			Models.Components.Component component = dataGridPosition.CurrentItem as Models.Components.Component;
+			component.Position.Angle += 90;
+			if (component.Position.Angle > 360)
+			{
+				component.Position.Angle -= 360;
+			}
+		}
+
+		private void ButtonRotateCounterClockwise_Click(object sender, RoutedEventArgs e)
+		{
+			if (dataGridPosition.CurrentItem == null)
+			{
+				return;
+			}
+
+			Models.Components.Component component = dataGridPosition.CurrentItem as Models.Components.Component;
+			component.Position.Angle -= 90;
+			if (component.Position.Angle < 0)
+			{
+				component.Position.Angle += 360;
+			}
+		}
+
+		private void ButtonImportPosition_Click(object sender, RoutedEventArgs e)
+		{
+			// Прежде осуществляем загрузку массива в отдельный список.
+			OpenFileDialog open = new OpenFileDialog
+			{
+				Filter = "HTML файл (*.htm, *.html)|*.htm;*.html"
+			};
+			bool? result = open.ShowDialog();
+			if (result != true)
+			{
+				return;
+			}
+
+			SeparateAllegroSpb.SeparateHtml separateHtml = new SeparateAllegroSpb.SeparateHtml();
+			ObservableCollection<Models.Components.Component> components = separateHtml.ImportHtmlComponents(open.FileName);
+
+			foreach (Models.Components.Component component in ComponentsCollection)
+			{
+				string refdes = component.RefDes;
+				Models.Components.Position position = null;
+				foreach (Models.Components.Component c0 in components)
+				{
+					if (c0.RefDes == refdes)
+					{
+						position = c0.Position;
+						break;
+					}
+				}
+
+				if (position != null)
+				{
+					component.Position = position;
+				}
+			}
+		}
 	}
 }

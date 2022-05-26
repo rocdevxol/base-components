@@ -30,7 +30,9 @@ namespace ExportExcel
 			foreach (Models.Components.Component component in list)
 			{
 				if (component.Names.Count > countNames)
+				{
 					countNames = component.Names.Count;
+				}
 			}
 
 			object[,] data = new object[list.Count + 1, 5 + countNames * 2];
@@ -41,7 +43,9 @@ namespace ExportExcel
 				data[i, 2] = list[i - 1].Description;
 				data[i, 3] = list[i - 1].Count;
 				if (list[i - 1].Soldering == false)
+				{
 					data[i, 4] = "Не паять";
+				}
 
 				for (int j = 0; j < list[i - 1].Names.Count; j++)
 				{
@@ -139,7 +143,9 @@ namespace ExportExcel
 			rg.Value = Data;
 
 			for (int i = 1; i <= 4; i++)
+			{
 				rg.Borders[i].LineStyle = 1;
+			}
 
 			// Set auto columns width
 			rg.EntireColumn.AutoFit();

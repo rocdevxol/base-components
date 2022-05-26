@@ -15,6 +15,7 @@ namespace Models.Boards
 		private bool enableToCalc;
 		private Components.ComponentList componentLists;
 		private Mechanical.MechanicalList mechanicalLists;
+		private Gerber.Gerber gerber;
 
 		/// <summary>
 		/// Наименование печатной платы
@@ -129,6 +130,22 @@ namespace Models.Boards
 			}
 		}
 
+		/// <summary>
+		/// Список gerber файлов для платы
+		/// </summary>
+		public Gerber.Gerber Gerber
+		{
+			get => gerber;
+			set
+			{
+				if (gerber != value)
+				{
+					gerber = value;
+					NotifyPropertyChanged();
+				}
+			}
+		}
+
 		public BoardJson(Board board)
 		{
 			Name = board.Name;
@@ -151,6 +168,7 @@ namespace Models.Boards
 
 			ComponentLists = new Components.ComponentList();
 			MechanicalLists = new Mechanical.MechanicalList();
+			Gerber = new Gerber.Gerber();
 		}
 
 		/// <summary>
@@ -169,6 +187,15 @@ namespace Models.Boards
 		public Mechanical.MechanicalList GetMechanicalList()
 		{
 			return MechanicalLists;
+		}
+
+		/// <summary>
+		/// Получить список gerber файлов
+		/// </summary>
+		/// <returns>список gerber файлов</returns>
+		public Gerber.Gerber GetGerberList()
+		{
+			return Gerber;
 		}
 
 		/// <summary>

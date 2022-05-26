@@ -115,7 +115,7 @@ namespace Models.Boards
 			}
 		}
 
-		public Board(String name, string description)
+		public Board(string name, string description)
 		{
 			Name = name;
 			Description = description;
@@ -126,7 +126,8 @@ namespace Models.Boards
 			Parts = new ObservableCollection<ITreeProject>
 			{
 				new Components.ComponentList(),
-				new Mechanical.MechanicalList()
+				new Mechanical.MechanicalList(),
+				new Gerber.Gerber()
 			};
 		}
 
@@ -146,7 +147,8 @@ namespace Models.Boards
 			Parts = new ObservableCollection<ITreeProject>
 			{
 				(Components.ComponentList)json.GetComponentList().Clone(),
-				(Mechanical.MechanicalList)json.GetMechanicalList().Clone()
+				(Mechanical.MechanicalList)json.GetMechanicalList().Clone(),
+				(Gerber.Gerber)json.GetGerberList().Clone()
 			};
 		}
 
@@ -169,6 +171,15 @@ namespace Models.Boards
 		}
 
 		/// <summary>
+		/// Получить список Gerber файлов
+		/// </summary>
+		/// <returns>Список Gerber файлов</returns>
+		public Gerber.Gerber GetGerberList()
+		{
+			return Parts[2] as Gerber.Gerber;
+		}
+
+		/// <summary>
 		/// Количество компонентов в печатной плате 
 		/// </summary>
 		public int GetCountComponents()
@@ -188,10 +199,14 @@ namespace Models.Boards
 
 		public override string ToString()
 		{
-			if (DecimalNumber == String.Empty)
+			if (DecimalNumber == string.Empty)
+			{
 				return $"{Name} [{Count}]";
+			}
 			else
+			{
 				return $"{Name} (Д/Н: {DecimalNumber}) [{Count}]";
+			}
 		}
 
 		public object Clone()

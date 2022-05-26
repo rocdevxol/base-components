@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace ExportExcel
@@ -13,6 +8,8 @@ namespace ExportExcel
 	/// </summary>
 	public class ExcelPrepare
 	{
+		public static string Folder = string.Empty;
+
 		public Excel.Application ExcelApp { get; set; }
 
 		public Excel.Workbook ExcelWorkBook { get; set; }
@@ -27,22 +24,27 @@ namespace ExportExcel
 
 			if (ExcelApp == null)
 			{
-				MessageBox.Show("Экспорт в Excel", "Excel не установлен", MessageBoxButton.OK, MessageBoxImage.Error);
+				_ = MessageBox.Show("Экспорт в Excel", "Excel не установлен", MessageBoxButton.OK, MessageBoxImage.Error);
 				return;
 			}
 
 			ExcelWorkBook = ExcelApp.Workbooks.Add(misValue);
-			//ExcelWorkBook.Name = name;
+			//SaveFile(name);
 		}
 
 		public void AddSheet(string name)
 		{
 			if (ExcelWorkSheet != null)
+			{
 				ExcelWorkBook.Worksheets.Add(misValue, ExcelWorkSheet, 1, misValue);
+			}
+
 			int count = ExcelWorkBook.Worksheets.Count;
 			ExcelWorkSheet = (Excel.Worksheet)ExcelWorkBook.Worksheets.get_Item(count);
-			if (name != String.Empty)
+			if (name != string.Empty)
+			{
 				ExcelWorkSheet.Name = name;
+			}
 		}
 
 		public void Update()
@@ -56,9 +58,15 @@ namespace ExportExcel
 		}
 
 
-		public void SaveFile(string fullName)
+		public void SaveFile(string name)
 		{
-			ExcelWorkBook.SaveAs(fullName, Excel.XlFileFormat.xlWorkbookNormal, misValue, misValue, misValue, misValue, Excel.XlSaveAsAccessMode.xlExclusive, misValue, misValue, misValue, misValue, misValue);
+			if (Folder == string.Empty)
+			{
+				// TODO Добавить выбор директории
+			}
+			string fullName = $"{Folder}\\{name}";
+
+			ExcelWorkBook.SaveAs(fullName, misValue, misValue, misValue, misValue, misValue, Excel.XlSaveAsAccessMode.xlExclusive, misValue, misValue, misValue, misValue, misValue);
 		}
 
 		public void CloseWorkBook()
