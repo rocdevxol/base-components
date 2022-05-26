@@ -39,33 +39,48 @@ namespace ExportExcel
 		/// </summary>
 		private static void Export_project_component_list()
 		{
+			ExcelPrepare excel = null;
 			try
 			{
-				ExcelPrepare excel = new ExcelPrepare(string.Format("Перечень компонентов {0}", Project.Name));
+				excel = new ExcelPrepare(string.Format("Перечень компонентов {0}", Project.Name));
 				Models.ReportComponents report = new Models.ReportComponents();
 
 				foreach (Models.Boards.Board board in Project.GetBoardList().Boards)
 				{
-					if (!board.EnableToCalc) continue;
-					if (!string.IsNullOrEmpty(board.DecimalNumber))
+					if (!board.EnableToCalc)
+					{
+						continue;
+					}
+
+					if (string.IsNullOrEmpty(board.DecimalNumber))
+					{
 						excel.AddSheet(string.Format("{0} - Компоненты", board.Name));
+					}
 					else
-						excel.AddSheet(string.Format("{0} [{1}] - Компоненты", board.Name, board.DecimalNumber));
+					{
+						excel.AddSheet(string.Format("{0} - Компоненты", board.Name));
+						//excel.AddSheet(string.Format("{0} [{1}] - Компоненты", board.Name, board.DecimalNumber));
+					}
+
 					ExcelRefDesBoard.ExportData(excel.ExcelWorkSheet, board.GetComponentList().Components);
 					report.AddComponents(board);
 				}
 
-				report.UpdateReport();
+				_ = report.UpdateReport();
 				excel.AddSheet("Перечень для закупки");
 				ExcelExportBuying.ExportData(excel.ExcelWorkSheet, report.Report);
 
 				excel.Update();
-				excel.VisibleExcel(true);
 			}
 			catch (Exception e)
 			{
-				MessageBox.Show(e.Message, "Экспорт в Excel", MessageBoxButton.OK, MessageBoxImage.Error);
+				_ = MessageBox.Show(e.Message, "Экспорт в Excel", MessageBoxButton.OK, MessageBoxImage.Error);
 			}
+			finally
+			{
+				excel.VisibleExcel(true);
+			}
+
 		}
 
 		/// <summary>
@@ -80,7 +95,7 @@ namespace ExportExcel
 			ExcelRefDesBoard.ExportData(excel.ExcelWorkSheet, Board.GetComponentList().Components);
 			report.AddComponents(Board);
 
-			report.UpdateReport();
+			_ = report.UpdateReport();
 			excel.AddSheet("Перечень для закупки");
 			ExcelExportBOM.ExportData(excel.ExcelWorkSheet, report.Report);
 

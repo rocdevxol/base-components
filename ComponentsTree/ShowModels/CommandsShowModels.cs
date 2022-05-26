@@ -47,6 +47,18 @@ namespace ComponentsTree.ShowModels
 		/// </summary>
 		public static RoutedCommand ExportLCSC = new RoutedCommand();
 
+		#region LCSC
+		/// <summary>
+		/// Загрузка библиотеки компонентов LCSC
+		/// </summary>
+		public static RoutedCommand DownloadLibraryLCSC = new RoutedCommand();
+
+		/// <summary>
+		/// Обновление информации по компоненту из библиотеки
+		/// </summary>
+		public static RoutedCommand UpdateComponentLCSCLibrary = new RoutedCommand();
+		#endregion
+
 		public override object ProvideValue(IServiceProvider serviceProvider)
 		{
 			throw new NotImplementedException();

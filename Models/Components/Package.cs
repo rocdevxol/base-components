@@ -123,7 +123,7 @@ namespace Models.Components
 
 		public override string ToString()
 		{
-			return $"{Name}:{NumPins}";
+			return $"{Name}:{PackageType}:{NumPins}";
 		}
 
 		public int CompareTo(Package obj)
@@ -152,8 +152,10 @@ namespace Models.Components
 		{
 			Package package = new Package(Name)
 			{
-				NumPins = NumPins
+				NumPins = NumPins,
+				PackageType = PackageType
 			};
+			
 
 			foreach (Package p in Packages)
 				package.Packages.Add((Package)p.Clone());

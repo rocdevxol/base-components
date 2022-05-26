@@ -60,6 +60,8 @@
     <Compile Include="Components\SubComponent.cs" />
     <Compile Include="Converters\EnumDescriptionTypeConverter.cs" />
     <Compile Include="ConvertProjects.cs" />
+    <Compile Include="Gerber\Gerber.cs" />
+    <Compile Include="Gerber\GerberLayer.cs" />
     <Compile Include="ITreeProject.cs" />
     <Compile Include="Mechanical\MechanicalComp.cs" />
     <Compile Include="Mechanical\MechanicalList.cs" />
