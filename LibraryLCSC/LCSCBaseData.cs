@@ -195,6 +195,7 @@ namespace LibraryLCSC
 
 		/// <summary>
 		/// Сохранение библиотеки в локальный файл
+		/// System.Runtime.Serialization.SerializationException: 'The internal array cannot expand to greater than Int32.MaxValue elements.'
 		/// </summary>
 		public static void StoredCatalog(LCSC.Catalog catalog)
 		{
